@@ -165,10 +165,31 @@ class Analyzer:
         show_list(len_dict, num_row=0, reversed=False)
 
     def show_letters(self):
-        letters = list()
-        for pos in self.syllables_pos:
-            for letter in self.syllables_pos[pos]:
+        a = ord('а')
+        alphabet = [chr(i) for i in range(a, a + 6)] + [chr(a + 33)] + [chr(i) for i in range(a + 6, a + 32)]
+        alphabet.append(' ')
+        letters = dict()
+        dict_len = len(self.syllables_amount)
+        amount_freq = dict()
+        for pos in range(dict_len):
+            letter_freq_dict: dict = self.syllables_amount[pos]
+            for letter in alphabet:
+                frequency = letter_freq_dict.setdefault(letter, 0)
+                amount_freq[pos] = amount_freq.setdefault(pos, 0) + frequency
+
+        for pos in range(dict_len):
+            letter_freq_dict: dict = self.syllables_amount[pos]
+            for letter in alphabet:
+                frequency = letter_freq_dict.setdefault(letter, 0)
+                letters[letter] = letters.setdefault(letter, list())
+                letters[letter].append(str(round(frequency * 100 / amount_freq[pos], 1)))
                 pass
+        values = list(letters.values())
+        for i in range(34):
+            values[i].insert(0, alphabet[i])
+        headers = list(range(dict_len))
+        headers.insert(0, ' ')
+        print(tabulate(values, headers=headers, tablefmt="pretty"))
         pass
 
     def show_pos_letters(self):

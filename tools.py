@@ -23,13 +23,14 @@ def get_words(filename):
         return None
 
 
-def show_list(list, num_row=1, reversed=True):
+def show_list(list_, num_row=1, reversed=True):
     items = None
-    if type(list).__name__ == 'dict':
-        items = list.items()
+    if type(list_).__name__ == 'dict':
+        items = list_.items()
+        # items = list(list_)
         items = sorted(items, key=itemgetter(num_row), reverse=reversed)
     else:
-        items = sorted(list, key=lambda x: x[num_row], reverse=reversed)
+        items = sorted(list_, key=lambda x: x[num_row], reverse=reversed)
     if type(items[0][1]).__name__ == 'float':
         items = [(n[0], str(round(n[1] * 100, 1)) + '%') for n in items]
     print(tabulate(items))
