@@ -37,9 +37,9 @@ class Analyzer:
             elif command in commands['help']:
                 print(tabulate(commands_raw))
             elif command in commands['show_letters']:
-                pass
+                self.show_letters()
             elif command in commands['show_pos_letters']:
-                pass
+                self.show_pos_letters()
             elif command in commands['test']:
                 pass
                 # self.input_ = (None, 'chehov.txt')
@@ -134,12 +134,12 @@ class Analyzer:
                 letter = word[n] if n < len(word) else ' '
                 # установка средней вероятности появления букв на определённых позициях
                 pos_dict = self.syllables_amount.setdefault(n, dict())
-                pos_dict[word[n]] = pos_dict.setdefault(word[n], 0) + 1
+                pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
 
                 # то же что и выше, только отдельно для каждой длины слов
                 len_dict = self.syllables_pos.setdefault(len(word), dict())
                 pos_dict = len_dict.setdefault(n, dict())
-                pos_dict[word[n]] = pos_dict.setdefault(word[n], 0) + 1
+                pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
 
                 n += 1
         for i in syllables:
@@ -165,6 +165,10 @@ class Analyzer:
         show_list(len_dict, num_row=0, reversed=False)
 
     def show_letters(self):
+        letters = list()
+        for pos in self.syllables_pos:
+            for letter in self.syllables_pos[pos]:
+                pass
         pass
 
     def show_pos_letters(self):
