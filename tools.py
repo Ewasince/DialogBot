@@ -36,6 +36,14 @@ def show_list(list_, num_row=1, reversed=True):
     print(tabulate(items))
 
 
+def fill_args(input_, args, pos=2):
+    if len(input_) > pos:
+        for arg in input_[pos:]:
+            for i in args:
+                if arg == i:
+                    args[i] = True
+
+
 service_chars = ''
 # set(range(0, 256)).remove(range())
 for i in range(32, 65):

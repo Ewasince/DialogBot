@@ -1,6 +1,6 @@
 import random
 
-from tools import get_words, show_list
+from tools import get_words, show_list, fill_args
 from operator import itemgetter
 from tabulate import tabulate
 
@@ -30,10 +30,7 @@ class Analyzer:
             elif command in commands['generate_word_2']:
                 self.generate_word_2()
             elif command in commands['show_syllables']:
-                if len(self.syllables) > 0:
-                    show_list(self.syllables)
-                else:
-                    print('no data')
+                self.show_syllables()
             elif command in commands['help']:
                 print(tabulate(commands_raw))
             elif command in commands['show_letters']:
@@ -87,7 +84,7 @@ class Analyzer:
         if len(self.syllables) == 0:
             print(' no data')
             return
-        count = 1
+        count = 1  # количество слов для генерации
         if len(self.input_) > 1:
             count = int(self.input_[1])
         for j in range(count):
@@ -105,7 +102,10 @@ class Analyzer:
                 weights = list()
                 for i in keys_:
                     values.append(i[1])
-                    weights.append(self.syllables[i])
+                    w1 = self.syllables[i]
+                    # calc_weight = lambda x1, x2: x1*
+                    # weight =
+                    weights.append()
                 letter = random.choices(values, weights=weights)
                 word += letter[0]
 
@@ -115,8 +115,8 @@ class Analyzer:
             pass
 
     def analyze_syllables(self):
-        filename = self.input_[1]
-        if filename == 't': filename = 'chehov.txt'
+        filename = test_file if self.input_[1] == 't' else self.input_[1]
+
         text = get_words(filename)
         syllables = dict()
         for word in text:
@@ -147,13 +147,17 @@ class Analyzer:
         pass
 
     def analyze_words(self):
-        filename = self.input_[1]
+        filename = test_file if self.input_[1] == 't' else self.input_[1]
+        args = {'-w': False}
+        fill_args(self.input_, args)
+
         text = get_words(filename)
-        words = dict()
-        for word in text:
-            words[word] = words.setdefault(word, 0) + 1
-        show_list(words)
-        print('')
+        if args['-w'] is True:
+            words = dict()
+            for word in text:
+                words[word] = words.setdefault(word, 0) + 1
+            show_list(words)
+            print('')
         len_dict = dict()
         for word in text:
             word_len = len(word)
@@ -164,10 +168,38 @@ class Analyzer:
         # sorted(len_dict)
         show_list(len_dict, num_row=0, reversed=False)
 
+    def show_syllables(self):
+        if len(self.syllables) == 0:
+            print('no data')
+            return
+        args = {'-p': False}
+        fill_args(self.input_, args, pos=1)
+
+        amounts = list()
+        if args['-p']:
+            for ni, i in enumerate(alphabet):
+                amounts.append(0)
+                for nj, j in enumerate(alphabet):
+                    key = i + j
+                    value = self.syllables.setdefault(key, 0)
+                    amounts[ni] += value
+
+        syllables = []
+        for ni, i in enumerate(alphabet):
+            syllables.append(list())
+            syllables[ni].append(i)
+            for nj, j in enumerate(alphabet):
+                key = i + j
+                value = self.syllables.setdefault(key, 0)
+                if args['-p']:
+                    value = round(value * 100 / amounts[ni], 2)
+                syllables[ni].append(value)
+        pass
+        headers = alphabet.copy()
+        headers.insert(0, ' ')
+        print(tabulate(syllables, headers=headers, tablefmt="pretty"))
+
     def show_letters(self):
-        a = ord('а')
-        alphabet = [chr(i) for i in range(a, a + 6)] + [chr(a + 33)] + [chr(i) for i in range(a + 6, a + 32)]
-        alphabet.append(' ')
         letters = dict()
         dict_len = len(self.syllables_amount)
         amount_freq = dict()
@@ -203,12 +235,16 @@ commands_raw = [['help', 'h', 'this command'],
                 ['analyze_words', 'aw', 'analyze the frequency and length of words'],
                 ['generate_word_1', 'gw1', '1st algorithm for generating words'],
                 ['generate_word_2', 'gw2', '2nd algorithm for generating words'],
-                ['show_syllables', 'ss', 'show table with analyzed syllables'],
+                ['show_syllables', 'ss', 'show table with analyzed syllables. -p - in percents'],
                 ['show_letters', 'sl', 'show frequency of letters on current positions'],
                 ['show_pos_letters', 'spl', 'same as \'show letters\' but divided by word length']]
 commands = dict()
 for i in commands_raw:
     commands[i[0]] = tuple(i[:-1])
+test_file = 'chehov.txt'
+
+alphabet = [chr(i) for i in range(1072, 1078)] + ['ё'] + [chr(i) for i in range(1078, 1104)]
+alphabet.insert(0, ' ')
 
 if __name__ == '__main__':
     main()
