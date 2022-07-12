@@ -3,6 +3,7 @@ import random
 from tools import get_words, show_list, fill_args
 from operator import itemgetter
 from tabulate import tabulate
+from copy import copy
 
 
 def main():
@@ -11,6 +12,9 @@ def main():
 
 
 class Analyzer:
+    def __init__(self):
+        pass
+
     syllables = dict()
     syllables_pos = dict()
     syllables_amount = dict()
@@ -32,7 +36,7 @@ class Analyzer:
             elif command in commands['show_syllables']:
                 self.show_syllables()
             elif command in commands['help']:
-                print(tabulate(commands_raw))
+                self.help()
             elif command in commands['show_letters']:
                 self.show_letters()
             elif command in commands['show_pos_letters']:
@@ -116,6 +120,8 @@ class Analyzer:
 
     def analyze_syllables(self):
         filename = test_file if self.input_[1] == 't' else self.input_[1]
+        args = {'-d': False}
+        fill_args(self.input_, args)
 
         text = get_words(filename)
         syllables = dict()
@@ -227,6 +233,20 @@ class Analyzer:
     def show_pos_letters(self):
         pass
 
+    def help(self):
+        list_commands = list()
+        # [n if arguments_raw.setdefault(n[0], 0) != 0 else n.append(arguments_raw[n[0]]) for n in commands_raw]
+        for i in commands_raw:
+            cmd = i[0]
+            args = arguments_raw.setdefault(cmd, None)
+            # if args is not None:
+            #     i = copy(i)
+            #     i.extend(args)
+            list_commands.append(i)
+            if args is not None:
+                list_commands.append(args)
+        print(tabulate(list_commands))
+
 
 commands_raw = [['help', 'h', 'this command'],
                 ['quit', 'q', 'exit the program'],
@@ -235,12 +255,19 @@ commands_raw = [['help', 'h', 'this command'],
                 ['analyze_words', 'aw', 'analyze the frequency and length of words'],
                 ['generate_word_1', 'gw1', '1st algorithm for generating words'],
                 ['generate_word_2', 'gw2', '2nd algorithm for generating words'],
-                ['show_syllables', 'ss', 'show table with analyzed syllables. -p - in percents'],
+                ['show_syllables', 'ss', 'show table with analyzed syllables'],
                 ['show_letters', 'sl', 'show frequency of letters on current positions'],
                 ['show_pos_letters', 'spl', 'same as \'show letters\' but divided by word length']]
+arguments_raw = {'analyze_words': ['-w', 'show all words frequency'],
+                 'show_syllables': ['-p', 'show relative probability'],
+                 'analyze': ['-d', 'analyze all files in directory']}
 commands = dict()
 for i in commands_raw:
     commands[i[0]] = tuple(i[:-1])
+for i in arguments_raw:
+    list_arg = arguments_raw[i]
+    list_arg.insert(0, '')
+    arguments_raw[i] = tuple(list_arg)
 test_file = 'chehov.txt'
 
 alphabet = [chr(i) for i in range(1072, 1078)] + ['ё'] + [chr(i) for i in range(1078, 1104)]

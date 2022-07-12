@@ -1,8 +1,10 @@
 import selenium
 from bs4 import BeautifulSoup
-import requests
-import os, re
+import requests, os, re
 
+
+# TODO: сделать метод изменения url
+# TODO: сделать подсчёт ошибок
 
 def main():
     parser = Parser_ilibrary_ru(url='https://ilibrary.ru/author/chekhov/form.8/l.all/index.html',
@@ -15,10 +17,7 @@ class Parser:
     save_path: str = ''
 
     def __init__(self, url, path=''):
-        self.url = url
-        self.save_path = path
-        if not os.path.exists(path):
-            os.mkdir(path)
+        self.reinit(url, path=path)
 
     def parse(self):
         pass
@@ -28,12 +27,19 @@ class Parser:
         self.parse()
         print('parsing finished')
 
+    def reinit(self, url, path=''):
+        self.url = url
+        self.save_path = path
+        if path == '': return
+        if not os.path.exists(path):
+            os.mkdir(path)
+
 
 class Parser_ilibrary_ru(Parser):
     url_site = ''
 
-    def __init__(self, url, path):
-        super().__init__(url, path)
+    def __init__(self, url, path=''):
+        super().__init__(url, path=path)
         parts_url = self.url.split('/')
         self.url_site = '{}//{}'.format(parts_url[0], parts_url[2])
         pass
@@ -45,7 +51,6 @@ class Parser_ilibrary_ru(Parser):
         soup = BeautifulSoup(page.text, "html.parser")
         list_ = soup.find('div', class_='list')
         for item in list_.findAll('a'):
-            # item = item.find('a')
             if item is None:
                 continue
             link = item.get('href')

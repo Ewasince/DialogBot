@@ -9,7 +9,7 @@ def main():
 def get_words(filename):
     try:
         text_raw = None
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             text_raw = f.read()
         text = list()
         for row in text_raw.split('\n'):
