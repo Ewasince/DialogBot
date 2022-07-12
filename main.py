@@ -1,3 +1,4 @@
+import os
 import random
 
 from tools import get_words, show_list, fill_args
@@ -85,12 +86,20 @@ class Analyzer:
             pass
 
     def generate_word_2(self):
+        args = {'-m': False}
+        fill_args(self.input_, args, pos=1)
+        pos_count = 2 if args['-m'] else 1  # position of 'count' argument
+
         if len(self.syllables) == 0:
-            print(' no data')
+            print('no data')
             return
-        count = 1  # количество слов для генерации
-        if len(self.input_) > 1:
-            count = int(self.input_[1])
+        count = 1  # count words to generate
+        if len(self.input_) > pos_count:
+            try:
+                count = int(self.input_[pos_count])
+            except Exception as e:
+                print(e)
+                pass
         for j in range(count):
             word = ''
             num = 0
@@ -106,10 +115,24 @@ class Analyzer:
                 weights = list()
                 for i in keys_:
                     values.append(i[1])
+                    next_letter = i[1]
                     w1 = self.syllables[i]
-                    # calc_weight = lambda x1, x2: x1*
-                    # weight =
-                    weights.append()
+                    pos_dict = self.syllables_amount.setdefault(num, dict())
+                    w2 = pos_dict.setdefault(next_letter, 0)
+
+                    if args['-m']:
+                        def calc_weight(x1, x2):
+                            return (x1 ** 2 + x2 ** 2) ** 0.5
+                    else:
+                        def calc_weight(x1, x2):
+                            return x1 * x2
+
+                    weight = calc_weight(w1, w2)
+                    weights.append(weight)
+                test = [(v, w) for v, w in zip(values, weights)]
+                test = sorted(test, key=lambda x: x[1], reverse=True)
+                if test[0][1] > test[1][1] * 2:
+                    pass
                 letter = random.choices(values, weights=weights)
                 word += letter[0]
 
@@ -119,10 +142,23 @@ class Analyzer:
             pass
 
     def analyze_syllables(self):
-        filename = test_file if self.input_[1] == 't' else self.input_[1]
+        pathname = test_file if self.input_[1] == 't' else self.input_[1]
         args = {'-d': False}
-        fill_args(self.input_, args)
+        fill_args(self.input_, args, pos=2)
+        if args['-d']:
+            try:
+                list_files = os.listdir(pathname)
+            except Exception as e:
+                print(e)
+            for name in list_files:
+                filename = '{}\\{}'.format(pathname, name)
+                self.analyze_syllables_(filename)
+        else:
+            self.analyze_syllables_(pathname)
 
+        pass
+
+    def analyze_syllables_(self, filename):
         text = get_words(filename)
         syllables = dict()
         for word in text:
@@ -149,8 +185,8 @@ class Analyzer:
 
                 n += 1
         for i in syllables:
-            self.syllables[i] = syllables.setdefault(i, 0) + syllables[i]
-        pass
+            self.syllables[i] = self.syllables.setdefault(i, 0) + syllables[i]
+        print('{} finished'.format(filename))
 
     def analyze_words(self):
         filename = test_file if self.input_[1] == 't' else self.input_[1]
@@ -260,7 +296,8 @@ commands_raw = [['help', 'h', 'this command'],
                 ['show_pos_letters', 'spl', 'same as \'show letters\' but divided by word length']]
 arguments_raw = {'analyze_words': ['-w', 'show all words frequency'],
                  'show_syllables': ['-p', 'show relative probability'],
-                 'analyze': ['-d', 'analyze all files in directory']}
+                 'analyze': ['-d', 'analyze all files in directory'],
+                 'generate_word_2': ['-m', 'use another formula to calculate coefficient']}
 commands = dict()
 for i in commands_raw:
     commands[i[0]] = tuple(i[:-1])

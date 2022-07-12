@@ -18,9 +18,10 @@ def get_words(filename):
                 if len(word) > 0:
                     text.append(word)
         return text
+    except UnicodeDecodeError as e:
+        print('wrong encoding. please turn file into "utf-8": {}'.format(e))
     except Exception as e:
         print(e)
-        return None
 
 
 def show_list(list_, num_row=1, reversed=True):
