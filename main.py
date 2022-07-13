@@ -4,7 +4,9 @@ import random
 from tools import get_words, show_list, fill_args
 from operator import itemgetter
 from tabulate import tabulate
-from copy import copy
+from copy import copy, deepcopy
+import json, requests
+import importlib
 
 
 def main():
@@ -12,14 +14,31 @@ def main():
     analyzer.console()
 
 
+def load_modules():
+    # путь от рабочей директории, ее можно изменить в настройках приложения
+    files = os.listdir("mysite/commands")
+    modules = filter(lambda x: x.endswith('.py'), files)
+    for m in modules:
+        importlib.import_module("commands." + m[0:-3])
+
+def get_answer(body):
+    # Сообщение по умолчанию если распознать не удастся
+    message = "Прости, не понимаю тебя. Напиши 'помощь', чтобы узнать мои команды"
+    attachment = ''
+    for c in command_list:
+        if body in c.keys:
+            message, attachment = c.process()
+    return message, attachment
+
+
 class Analyzer:
     def __init__(self):
-        pass
 
-    syllables = dict()
-    syllables_pos = dict()
-    syllables_amount = dict()
-    input_ = ['']
+        self.syllables = dict()
+        self.syllables_pos = dict()
+        self.syllables_amount = dict()
+        self.input_ = ['']
+        pass
 
     def console(self):
         print('type \'help\' for more information')
@@ -34,6 +53,8 @@ class Analyzer:
                 self.generate_word_1()
             elif command in commands['generate_word_2']:
                 self.generate_word_2()
+            elif command in commands['generate_word_3']:
+                self.generate_word_3()
             elif command in commands['show_syllables']:
                 self.show_syllables()
             elif command in commands['help']:
@@ -42,12 +63,13 @@ class Analyzer:
                 self.show_letters()
             elif command in commands['show_pos_letters']:
                 self.show_pos_letters()
+            elif command in commands['send_table']:
+                self.send_table()
             elif command in commands['test']:
                 pass
-                # self.input_ = (None, 'chehov.txt')
-                # self.analyze_syllables()
-                # self.generate_word_1()
-                # print('not filled')
+                self.input_ = (None, 't')
+                self.analyze_syllables()
+                self.send_table()
             else:
                 print('unknown command \'{}\''.format(command))
 
@@ -150,6 +172,7 @@ class Analyzer:
                 list_files = os.listdir(pathname)
             except Exception as e:
                 print(e)
+                return
             for name in list_files:
                 filename = '{}\\{}'.format(pathname, name)
                 self.analyze_syllables_(filename)
@@ -188,27 +211,27 @@ class Analyzer:
             self.syllables[i] = self.syllables.setdefault(i, 0) + syllables[i]
         print('{} finished'.format(filename))
 
-    def analyze_words(self):
-        filename = test_file if self.input_[1] == 't' else self.input_[1]
-        args = {'-w': False}
-        fill_args(self.input_, args)
-
-        text = get_words(filename)
-        if args['-w'] is True:
-            words = dict()
-            for word in text:
-                words[word] = words.setdefault(word, 0) + 1
-            show_list(words)
-            print('')
-        len_dict = dict()
-        for word in text:
-            word_len = len(word)
-            len_dict[word_len] = len_dict.setdefault(word_len, 0) + 1
-        amount_words = len(text)
-        for length in len_dict:
-            len_dict[length] = len_dict[length] / amount_words
-        # sorted(len_dict)
-        show_list(len_dict, num_row=0, reversed=False)
+    # def analyze_words(self):
+    #     filename = test_file if self.input_[1] == 't' else self.input_[1]
+    #     args = {'-w': False}
+    #     fill_args(self.input_, args)
+    #
+    #     text = get_words(filename)
+    #     if args['-w'] is True:
+    #         words = dict()
+    #         for word in text:
+    #             words[word] = words.setdefault(word, 0) + 1
+    #         show_list(words)
+    #         print('')
+    #     len_dict = dict()
+    #     for word in text:
+    #         word_len = len(word)
+    #         len_dict[word_len] = len_dict.setdefault(word_len, 0) + 1
+    #     amount_words = len(text)
+    #     for length in len_dict:
+    #         len_dict[length] = len_dict[length] / amount_words
+    #     # sorted(len_dict)
+    #     show_list(len_dict, num_row=0, reversed=False)
 
     def show_syllables(self):
         if len(self.syllables) == 0:
@@ -269,6 +292,14 @@ class Analyzer:
     def show_pos_letters(self):
         pass
 
+    def send_table(self):
+        output = {'type': 'table', 'data': self.syllables}
+        json_str = json.dumps(output)
+        response = requests.post(server_url, data=json_str)
+        print('{} response: {}'.format(server_url, response.status_code))
+        print('{}: {}'.format(server_url, response.text))
+        pass
+
     def help(self):
         list_commands = list()
         # [n if arguments_raw.setdefault(n[0], 0) != 0 else n.append(arguments_raw[n[0]]) for n in commands_raw]
@@ -284,6 +315,8 @@ class Analyzer:
         print(tabulate(list_commands))
 
 
+server_url = 'http://ewasince.pythonanywhere.com/'
+
 commands_raw = [['help', 'h', 'this command'],
                 ['quit', 'q', 'exit the program'],
                 ['analyze', 'a', 'analyze text for generating words'],
@@ -293,7 +326,8 @@ commands_raw = [['help', 'h', 'this command'],
                 ['generate_word_2', 'gw2', '2nd algorithm for generating words'],
                 ['show_syllables', 'ss', 'show table with analyzed syllables'],
                 ['show_letters', 'sl', 'show frequency of letters on current positions'],
-                ['show_pos_letters', 'spl', 'same as \'show letters\' but divided by word length']]
+                ['show_pos_letters', 'spl', 'same as \'show letters\' but divided by word length'],
+                ['send_table', 'st', 'send table of syllables to server']]
 arguments_raw = {'analyze_words': ['-w', 'show all words frequency'],
                  'show_syllables': ['-p', 'show relative probability'],
                  'analyze': ['-d', 'analyze all files in directory'],

@@ -13,11 +13,11 @@ def main():
 
 
 class Parser:
-    url: str = ''
-    save_path: str = ''
-
     def __init__(self, url, path=''):
         self.reinit(url, path=path)
+
+        self.url: str = ''
+        self.save_path: str = ''
 
     def parse(self):
         pass
@@ -36,7 +36,6 @@ class Parser:
 
 
 class Parser_ilibrary_ru(Parser):
-    url_site = ''
 
     def __init__(self, url, path=''):
         super().__init__(url, path=path)
