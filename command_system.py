@@ -6,7 +6,7 @@ command_list = []
 class Command:
     def __init__(self):
         self.__keys = []
-        self.description = ''
+        self.__description = ''
         self.__kwargs = {}
         command_list.append(self)
 
@@ -21,13 +21,20 @@ class Command:
 
     @property
     def kwargs(self):
-        # return copy(self.__kwargs)
+        return_dict = {}
+        for k in self.__kwargs:
+            return_dict[k] = None
+        return return_dict
 
     @kwargs.setter
-    def kwargs(self, mas):
-        self.__kwargs = copy
-        # for k in mas:
-        #     self.__kwargs[k[0]] = k[1]
+    def kwargs(self, kwargs_):
+        self.__keys = copy.deepcopy(kwargs_)
+
+    def get_description_kwargs(self):
+        desc_list = []
+        for k in self.__kwargs:
+            desc_list.append((k, self.__kwargs[k]))
+        return desc_list
 
     def process(self, *args):
         pass
