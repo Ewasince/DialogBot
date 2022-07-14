@@ -2,13 +2,16 @@ import command_system
 import json
 from settings import server_url
 import requests
+from client import list_clients, Client
 
 
 def request_data(input_, kwargs):
-    json_str = json.dumps({'type': 'request'})
-    response = requests.post(server_url, json_str)
-    print('{}: {}'.format(server_url, response.status_code))
-    print(json.loads(response.text))
+    if len(list_clients) == 1:
+        client: Client = list_clients[0]
+        data = client.request_data()
+        print(data)
+    else:
+        print('!there are {} clients in environment!'.format(len(list_clients)))
 
 
 request_data_command = command_system.Command()

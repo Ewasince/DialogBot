@@ -26,3 +26,4 @@ confirmation_token = settings['confirmation_token']
 access_token = settings['access_token']
 test_filename = settings['test_filename']
 server_url = 'https://ewasince.pythonanywhere.com/'
+data_dir = 'data'

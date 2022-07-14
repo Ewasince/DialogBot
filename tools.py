@@ -1,5 +1,8 @@
+import os, json
+
 from tabulate import tabulate
 from operator import itemgetter
+from settings import data_dir
 
 
 def main():
@@ -51,6 +54,49 @@ def fill_args(input_, kwargs):
             kwargs[kwarg] = value
         n += 1
     return kwargs
+
+
+def check_path(path: str):
+    dirs = path.split('\\')
+    for n, d in enumerate(dirs):
+        cur_path = '\\'.join(dirs[0:n + 1])
+        if not os.path.exists(cur_path):
+            os.mkdir(cur_path)
+
+
+def save_dict(filename, dictionary):
+    check_path(data_dir)
+    filename = '{}\\{}.json'.format(data_dir, filename)
+    if not os.path.exists(filename):
+        with open(filename, 'w') as f:
+            json.dump({}, f)
+    with open(filename) as f:
+        last_values: dict = json.load(f)
+    with open(filename, 'w') as f:
+        try:
+            merge_dicts(last_values, dictionary)
+            json.dump(last_values, f)
+            print('{} successfully saved'.format(filename))
+        except Exception() as e:
+            print(e)
+    return last_values
+
+
+def merge_dicts(base_dict: dict, second_dict: dict):
+    for k in second_dict:
+        first_item = base_dict.setdefault(k, 0)
+        second_item = second_dict[k]
+        type1 = type(first_item).__name__
+        type2 = type(second_item).__name__
+        if type1 == 'dict' and type2 == 'dict':
+            base_dict[k] = merge_dicts(first_item, second_item)
+        elif type1 != type2:
+            base_dict[k] = first_item if type1 == 'dict' else second_item
+        elif type1 == 'int' and type2 == 'int':
+            base_dict[k] = base_dict.setdefault(k, 0) + second_dict[k]
+        else:
+            raise Exception('different types in dicts')
+    return base_dict
 
 
 service_chars = ''
