@@ -14,21 +14,21 @@ def main():
     analyzer.console()
 
 
-def load_modules():
-    # путь от рабочей директории, ее можно изменить в настройках приложения
-    files = os.listdir("mysite/commands")
-    modules = filter(lambda x: x.endswith('.py'), files)
-    for m in modules:
-        importlib.import_module("commands." + m[0:-3])
-
-def get_answer(body):
-    # Сообщение по умолчанию если распознать не удастся
-    message = "Прости, не понимаю тебя. Напиши 'помощь', чтобы узнать мои команды"
-    attachment = ''
-    for c in command_list:
-        if body in c.keys:
-            message, attachment = c.process()
-    return message, attachment
+# def load_modules():
+#     # путь от рабочей директории, ее можно изменить в настройках приложения
+#     files = os.listdir("mysite/commands")
+#     modules = filter(lambda x: x.endswith('.py'), files)
+#     for m in modules:
+#         importlib.import_module("commands." + m[0:-3])
+#
+# def get_answer(body):
+#     # Сообщение по умолчанию если распознать не удастся
+#     message = "Прости, не понимаю тебя. Напиши 'помощь', чтобы узнать мои команды"
+#     attachment = ''
+#     for c in command_list:
+#         if body in c.keys:
+#             message, attachment = c.process()
+#     return message, attachment
 
 
 class Analyzer:
@@ -53,8 +53,8 @@ class Analyzer:
                 self.generate_word_1()
             elif command in commands['generate_word_2']:
                 self.generate_word_2()
-            elif command in commands['generate_word_3']:
-                self.generate_word_3()
+            # elif command in commands['generate_word_3']:
+            #     self.generate_word_3()
             elif command in commands['show_syllables']:
                 self.show_syllables()
             elif command in commands['help']:
@@ -292,13 +292,15 @@ class Analyzer:
     def show_pos_letters(self):
         pass
 
-    def send_table(self):
-        output = {'type': 'table', 'data': self.syllables}
-        json_str = json.dumps(output)
-        response = requests.post(server_url, data=json_str)
-        print('{} response: {}'.format(server_url, response.status_code))
-        print('{}: {}'.format(server_url, response.text))
+    def request_data(self):
+        json_str = json.dumps({'type': 'request'})
+        response = requests.post(server_url, json_str)
+        print(response.status_code)
+        print(json.loads(response.text))
         pass
+
+    def send_data(self, data: dict):
+        requests.post(server_url, )
 
     def help(self):
         list_commands = list()
