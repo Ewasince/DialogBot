@@ -47,121 +47,121 @@ class Analyzer:
             command = self.input_[0]
             if command in commands['analyze_words']:
                 # self.analyze_words()
-            elif command in commands['analyze']:
-                # self.analyze_syllables()
-            elif command in commands['generate_word_1']:
-                self.generate_word_1()
-            elif command in commands['generate_word_2']:
-                self.generate_word_2()
+            # elif command in commands['analyze']:
+            #     # self.analyze_syllables()
+            # elif command in commands['generate_word_1']:
+            #     self.generate_word_1()
+            # elif command in commands['generate_word_2']:
+            #     self.generate_word_2()
             # elif command in commands['generate_word_3']:
             #     self.generate_word_3()
-            elif command in commands['show_syllables']:
-                self.show_syllables()
-            elif command in commands['help']:
-                self.help()
-            elif command in commands['show_letters']:
-                self.show_letters()
-            elif command in commands['show_pos_letters']:
-                self.show_pos_letters()
-            elif command in commands['send_table']:
-                self.send_table()
-            elif command in commands['test']:
-                pass
-                self.input_ = (None, 't')
-                self.analyze_syllables()
-                self.send_table()
+            # elif command in commands['show_syllables']:
+            #     self.show_syllables()
+            # elif command in commands['help']:
+            #     self.help()
+            # elif command in commands['show_letters']:
+            #     self.show_letters()
+            # elif command in commands['show_pos_letters']:
+            #     self.show_pos_letters()
+            # elif command in commands['send_table']:
+            #     self.send_table()
+            # elif command in commands['test']:
+            #     pass
+            #     self.input_ = (None, 't')
+            #     self.analyze_syllables()
+            #     self.send_table()
             else:
                 print('unknown command \'{}\''.format(command))
 
             pass
         pass
 
-    def generate_word_1(self):
-        if len(self.syllables) == 0:
-            print(' no data')
-            return
-        count = 1
-        if len(self.input_) > 1:
-            count = int(self.input_[1])
-        for j in range(count):
-            word = ''
-            num = 0
-            flag = True
-            while flag:
-                keys = self.syllables.keys()
-                keys_ = list()
-                if num == 0:
-                    keys_ = [n for n in keys if n[0] == ' ']
-                else:
-                    keys_ = [n for n in keys if n[0] == word[num - 1]]
-                values = list()
-                weights = list()
-                for i in keys_:
-                    values.append(i[1])
-                    weights.append(self.syllables[i])
-                letter = random.choices(values, weights=weights)
-                word += letter[0]
-
-                if word[-1] == ' ': flag = False
-                num += 1
-            print(word[:-1])
-            pass
-
-    def generate_word_2(self):
-        args = {'-m': False}
-        fill_args(self.input_, args, pos=1)
-        pos_count = 2 if args['-m'] else 1  # position of 'count' argument
-
-        if len(self.syllables) == 0:
-            print('no data')
-            return
-        count = 1  # count words to generate
-        if len(self.input_) > pos_count:
-            try:
-                count = int(self.input_[pos_count])
-            except Exception as e:
-                print(e)
-                pass
-        for j in range(count):
-            word = ''
-            num = 0
-            flag = True
-            while flag:
-                keys = self.syllables.keys()
-                keys_ = list()
-                if num == 0:
-                    keys_ = [n for n in keys if n[0] == ' ']
-                else:
-                    keys_ = [n for n in keys if n[0] == word[num - 1]]
-                values = list()
-                weights = list()
-                for i in keys_:
-                    values.append(i[1])
-                    next_letter = i[1]
-                    w1 = self.syllables[i]
-                    pos_dict = self.syllables_amount.setdefault(num, dict())
-                    w2 = pos_dict.setdefault(next_letter, 0)
-
-                    if args['-m']:
-                        def calc_weight(x1, x2):
-                            return (x1 ** 2 + x2 ** 2) ** 0.5
-                    else:
-                        def calc_weight(x1, x2):
-                            return x1 * x2
-
-                    weight = calc_weight(w1, w2)
-                    weights.append(weight)
-                test = [(v, w) for v, w in zip(values, weights)]
-                test = sorted(test, key=lambda x: x[1], reverse=True)
-                if test[0][1] > test[1][1] * 2:
-                    pass
-                letter = random.choices(values, weights=weights)
-                word += letter[0]
-
-                if word[-1] == ' ': flag = False
-                num += 1
-            print(word[:-1])
-            pass
+    # def generate_word_1(self):
+    #     if len(self.syllables) == 0:
+    #         print(' no data')
+    #         return
+    #     count = 1
+    #     if len(self.input_) > 1:
+    #         count = int(self.input_[1])
+    #     for j in range(count):
+    #         word = ''
+    #         num = 0
+    #         flag = True
+    #         while flag:
+    #             keys = self.syllables.keys()
+    #             keys_ = list()
+    #             if num == 0:
+    #                 keys_ = [n for n in keys if n[0] == ' ']
+    #             else:
+    #                 keys_ = [n for n in keys if n[0] == word[num - 1]]
+    #             values = list()
+    #             weights = list()
+    #             for i in keys_:
+    #                 values.append(i[1])
+    #                 weights.append(self.syllables[i])
+    #             letter = random.choices(values, weights=weights)
+    #             word += letter[0]
+    #
+    #             if word[-1] == ' ': flag = False
+    #             num += 1
+    #         print(word[:-1])
+    #         pass
+    #
+    # def generate_word_2(self):
+    #     args = {'-m': False}
+    #     fill_args(self.input_, args, pos=1)
+    #     pos_count = 2 if args['-m'] else 1  # position of 'count' argument
+    #
+    #     if len(self.syllables) == 0:
+    #         print('no data')
+    #         return
+    #     count = 1  # count words to generate
+    #     if len(self.input_) > pos_count:
+    #         try:
+    #             count = int(self.input_[pos_count])
+    #         except Exception as e:
+    #             print(e)
+    #             pass
+    #     for j in range(count):
+    #         word = ''
+    #         num = 0
+    #         flag = True
+    #         while flag:
+    #             keys = self.syllables.keys()
+    #             keys_ = list()
+    #             if num == 0:
+    #                 keys_ = [n for n in keys if n[0] == ' ']
+    #             else:
+    #                 keys_ = [n for n in keys if n[0] == word[num - 1]]
+    #             values = list()
+    #             weights = list()
+    #             for i in keys_:
+    #                 values.append(i[1])
+    #                 next_letter = i[1]
+    #                 w1 = self.syllables[i]
+    #                 pos_dict = self.syllables_amount.setdefault(num, dict())
+    #                 w2 = pos_dict.setdefault(next_letter, 0)
+    #
+    #                 if args['-m']:
+    #                     def calc_weight(x1, x2):
+    #                         return (x1 ** 2 + x2 ** 2) ** 0.5
+    #                 else:
+    #                     def calc_weight(x1, x2):
+    #                         return x1 * x2
+    #
+    #                 weight = calc_weight(w1, w2)
+    #                 weights.append(weight)
+    #             test = [(v, w) for v, w in zip(values, weights)]
+    #             test = sorted(test, key=lambda x: x[1], reverse=True)
+    #             if test[0][1] > test[1][1] * 2:
+    #                 pass
+    #             letter = random.choices(values, weights=weights)
+    #             word += letter[0]
+    #
+    #             if word[-1] == ' ': flag = False
+    #             num += 1
+    #         print(word[:-1])
+    #         pass
 
     # def analyze_syllables(self):
     #     pathname = test_file if self.input_[1] == 't' else self.input_[1]
@@ -233,91 +233,90 @@ class Analyzer:
     #     # sorted(len_dict)
     #     show_list(len_dict, num_row=0, reversed=False)
 
-    def show_syllables(self):
-        if len(self.syllables) == 0:
-            print('no data')
-            return
-        args = {'-p': False}
-        fill_args(self.input_, args, pos=1)
+    # def show_syllables(self):
+    #     if len(self.syllables) == 0:
+    #         print('no data')
+    #         return
+    #     args = {'-p': False}
+    #     fill_args(self.input_, args, pos=1)
+    #
+    #     amounts = list()
+    #     if args['-p']:
+    #         for ni, i in enumerate(alphabet):
+    #             amounts.append(0)
+    #             for nj, j in enumerate(alphabet):
+    #                 key = i + j
+    #                 value = self.syllables.setdefault(key, 0)
+    #                 amounts[ni] += value
+    #
+    #     syllables = []
+    #     for ni, i in enumerate(alphabet):
+    #         syllables.append(list())
+    #         syllables[ni].append(i)
+    #         for nj, j in enumerate(alphabet):
+    #             key = i + j
+    #             value = self.syllables.setdefault(key, 0)
+    #             if args['-p']:
+    #                 value = round(value * 100 / amounts[ni], 2)
+    #             syllables[ni].append(value)
+    #     pass
+    #     headers = alphabet.copy()
+    #     headers.insert(0, ' ')
+    #     print(tabulate(syllables, headers=headers, tablefmt="pretty"))
 
-        amounts = list()
-        if args['-p']:
-            for ni, i in enumerate(alphabet):
-                amounts.append(0)
-                for nj, j in enumerate(alphabet):
-                    key = i + j
-                    value = self.syllables.setdefault(key, 0)
-                    amounts[ni] += value
+    # def show_letters(self):
+    #     letters = dict()
+    #     dict_len = len(self.syllables_amount)
+    #     amount_freq = dict()
+    #     for pos in range(dict_len):
+    #         letter_freq_dict: dict = self.syllables_amount[pos]
+    #         for letter in alphabet:
+    #             frequency = letter_freq_dict.setdefault(letter, 0)
+    #             amount_freq[pos] = amount_freq.setdefault(pos, 0) + frequency
+    #
+    #     for pos in range(dict_len):
+    #         letter_freq_dict: dict = self.syllables_amount[pos]
+    #         for letter in alphabet:
+    #             frequency = letter_freq_dict.setdefault(letter, 0)
+    #             letters[letter] = letters.setdefault(letter, list())
+    #             letters[letter].append(str(round(frequency * 100 / amount_freq[pos], 1)))
+    #             pass
+    #     values = list(letters.values())
+    #     for i in range(34):
+    #         values[i].insert(0, alphabet[i])
+    #     headers = list(range(dict_len))
+    #     headers.insert(0, ' ')
+    #     print(tabulate(values, headers=headers, tablefmt="pretty"))
+    #     pass
 
-        syllables = []
-        for ni, i in enumerate(alphabet):
-            syllables.append(list())
-            syllables[ni].append(i)
-            for nj, j in enumerate(alphabet):
-                key = i + j
-                value = self.syllables.setdefault(key, 0)
-                if args['-p']:
-                    value = round(value * 100 / amounts[ni], 2)
-                syllables[ni].append(value)
-        pass
-        headers = alphabet.copy()
-        headers.insert(0, ' ')
-        print(tabulate(syllables, headers=headers, tablefmt="pretty"))
+    # def show_pos_letters(self):
+    #     pass
 
-    def show_letters(self):
-        letters = dict()
-        dict_len = len(self.syllables_amount)
-        amount_freq = dict()
-        for pos in range(dict_len):
-            letter_freq_dict: dict = self.syllables_amount[pos]
-            for letter in alphabet:
-                frequency = letter_freq_dict.setdefault(letter, 0)
-                amount_freq[pos] = amount_freq.setdefault(pos, 0) + frequency
+    # def request_data(self):
+    #     json_str = json.dumps({'type': 'request'})
+    #     response = requests.post(server_url, json_str)
+    #     print(response.status_code)
+    #     print(json.loads(response.text))
+    #     pass
 
-        for pos in range(dict_len):
-            letter_freq_dict: dict = self.syllables_amount[pos]
-            for letter in alphabet:
-                frequency = letter_freq_dict.setdefault(letter, 0)
-                letters[letter] = letters.setdefault(letter, list())
-                letters[letter].append(str(round(frequency * 100 / amount_freq[pos], 1)))
-                pass
-        values = list(letters.values())
-        for i in range(34):
-            values[i].insert(0, alphabet[i])
-        headers = list(range(dict_len))
-        headers.insert(0, ' ')
-        print(tabulate(values, headers=headers, tablefmt="pretty"))
-        pass
+    # def send_data(self, data: dict):
+    #     requests.post(server_url, )
 
-    def show_pos_letters(self):
-        pass
-
-    def request_data(self):
-        json_str = json.dumps({'type': 'request'})
-        response = requests.post(server_url, json_str)
-        print(response.status_code)
-        print(json.loads(response.text))
-        pass
-
-    def send_data(self, data: dict):
-        requests.post(server_url, )
-
-    def help(self):
-        list_commands = list()
-        # [n if arguments_raw.setdefault(n[0], 0) != 0 else n.append(arguments_raw[n[0]]) for n in commands_raw]
-        for i in commands_raw:
-            cmd = i[0]
-            args = arguments_raw.setdefault(cmd, None)
-            # if args is not None:
-            #     i = copy(i)
-            #     i.extend(args)
-            list_commands.append(i)
-            if args is not None:
-                list_commands.append(args)
-        print(tabulate(list_commands))
+    # def help(self):
+    #     list_commands = list()
+    #     # [n if arguments_raw.setdefault(n[0], 0) != 0 else n.append(arguments_raw[n[0]]) for n in commands_raw]
+    #     for i in commands_raw:
+    #         cmd = i[0]
+    #         args = arguments_raw.setdefault(cmd, None)
+    #         # if args is not None:
+    #         #     i = copy(i)
+    #         #     i.extend(args)
+    #         list_commands.append(i)
+    #         if args is not None:
+    #             list_commands.append(args)
+    #     print(tabulate(list_commands))
 
 
-server_url = 'http://ewasince.pythonanywhere.com/'
 
 commands_raw = [['help', 'h', 'this command'],
                 ['quit', 'q', 'exit the program'],
@@ -341,10 +340,9 @@ for i in arguments_raw:
     list_arg = arguments_raw[i]
     list_arg.insert(0, '')
     arguments_raw[i] = tuple(list_arg)
-test_file = 'chehov.txt'
+# test_file = 'chehov.txt'
 
-alphabet = [chr(i) for i in range(1072, 1078)] + ['ё'] + [chr(i) for i in range(1078, 1104)]
-alphabet.insert(0, ' ')
+
 
 if __name__ == '__main__':
     main()

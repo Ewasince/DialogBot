@@ -55,5 +55,8 @@ for i in range(122, 127):
     service_chars += chr(i)
 service_chars += '—»«'
 
+alphabet = [chr(i) for i in range(1072, 1078)] + ['ё'] + [chr(i) for i in range(1078, 1104)]
+alphabet.insert(0, ' ')
+
 if __name__ == '__main__':
     main()

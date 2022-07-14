@@ -1,3 +1,11 @@
-token = 'vk1.a.fr4OtqfZ-6zOESOGHmTVGqvZ8AKmqIQS813EqYZvs85WOyX9G_QintKlTHwADn4ifCqE9eFh1TfX1AQnuoAZuMaWYYhnVUzXxFusmuA9u5Tu8LmF7I0-QMacZiEwvpzKTQzy4hEZdtq8CslvU6HjrqxSMjIwx9bihvqFqBT7R1HdkfvduA9_gwpLA0jl6aCb'
-confirmation_token = 'gfbv784beytivbe4ovt'
-access_token = '080deb67080deb67080deb672a08708a850080d080deb676ac089b6a9779b5921b8dd60'
+import json
+
+settings: dict
+with open('settings.json') as f:
+    settings = json.load(f)
+
+token = settings['token']
+confirmation_token = settings['confirmation_token']
+access_token = settings['access_token']
+test_filename = settings['test_filename']
+server_url = 'http://ewasince.pythonanywhere.com/'

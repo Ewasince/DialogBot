@@ -3,11 +3,11 @@ import json
 
 import command_system
 from tools import show_list, get_words
-from main import test_file
+from settings import test_filename
 
 
 def analyze_words(input_, kwargs):
-    pathname = test_file if input_[0] == 't' else input_[0]
+    pathname = test_filenam if input_[0] == 't' else input_[0]
 
     len_dict = dict()
     if kwargs['-d']:

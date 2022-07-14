@@ -1,9 +1,10 @@
 import json
 import os
+from settings import test_filename
 
 
 def analyze(input_, kwargs):
-    pathname = test_file if input_[0] == 't' else input_[0]
+    pathname = test_filename if input_[0] == 't' else input_[0]
 
     syll_dict, syll_dict_pos, syll_dict_pos_by_word = dict(), dict(), dict()
     if kwargs['-d']:

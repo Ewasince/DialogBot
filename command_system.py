@@ -6,7 +6,7 @@ command_list = []
 class Command:
     def __init__(self):
         self.__keys = []
-        self.__description = ''
+        self.description = ''
         self.__kwargs = {}
         command_list.append(self)
 
@@ -17,7 +17,7 @@ class Command:
     @keys.setter
     def keys(self, mas):
         for k in mas:
-            self.__keys.append(k.lower())
+            self.__keys.append(k)
 
     @property
     def kwargs(self):
