@@ -8,7 +8,7 @@ import requests, os, re
 
 def main():
     parser = Parser_ilibrary_ru(url='https://ilibrary.ru/author/chekhov/form.8/l.all/index.html',
-                                path='chekhov\\')
+                                path='libraries/chekhov\\')
     parser.start()
 
 
