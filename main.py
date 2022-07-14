@@ -16,17 +16,6 @@ def main():
     analyzer.console()
 
 
-#
-# def get_answer(body):
-#     # Сообщение по умолчанию если распознать не удастся
-#     message = "Прости, не понимаю тебя. Напиши 'помощь', чтобы узнать мои команды"
-#     attachment = ''
-#     for c in command_list:
-#         if body in c.keys:
-#             message, attachment = c.process()
-#     return message, attachment
-
-
 class Analyzer:
     def __init__(self):
         self.input_ = ['']

@@ -1,6 +1,6 @@
-import selenium
 from bs4 import BeautifulSoup
 import requests, os, re
+from tools import check_path
 
 
 # TODO: сделать метод изменения url
@@ -8,16 +8,16 @@ import requests, os, re
 
 def main():
     parser = Parser_ilibrary_ru(url='https://ilibrary.ru/author/chekhov/form.8/l.all/index.html',
-                                path='libraries/chekhov\\')
+                                path='libraries\\chekhov\\')
     parser.start()
 
 
 class Parser:
     def __init__(self, url, path=''):
-        self.reinit(url, path=path)
-
         self.url: str = ''
         self.save_path: str = ''
+        self.reinit(url, path=path)
+
 
     def parse(self):
         pass
@@ -32,11 +32,10 @@ class Parser:
         self.save_path = path
         if path == '': return
         if not os.path.exists(path):
-            os.mkdir(path)
+            check_path(path)
 
 
 class Parser_ilibrary_ru(Parser):
-
     def __init__(self, url, path=''):
         super().__init__(url, path=path)
         parts_url = self.url.split('/')
