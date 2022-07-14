@@ -1,6 +1,8 @@
 import json
 import os
 from settings import test_filename
+import command_system
+from tools import show_list, get_words
 
 
 def analyze(input_, kwargs):
@@ -44,7 +46,7 @@ def analyze(input_, kwargs):
         show_list(last_values_pos_by_word, num_row=0, reversed=False)
 
 
-def analyze_syllables_(filename, syll_dict, syll_dict_pos, syll_dict_pos_by_word):
+def analyze_syllables(filename, syll_dict, syll_dict_pos, syll_dict_pos_by_word):
     text = get_words(filename)
     for word in text:
         n = 0

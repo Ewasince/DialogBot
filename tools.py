@@ -37,12 +37,20 @@ def show_list(list_, num_row=1, reversed=True):
     print(tabulate(items))
 
 
-def fill_args(input_, args, pos=2):
-    if len(input_) > pos:
-        for arg in input_[pos:]:
-            for i in args:
-                if arg == i:
-                    args[i] = True
+def fill_args(input_, kwargs):
+    n = 0
+    while len(input_) > n:
+        item = input_[n]
+        if item[0] == '-':
+            kwarg = input_.pop(n)
+            value = True
+            if len(input_) >= n + 1:
+                if input_[n][0] != '-':
+                    value = input_.pop(n)
+            n -= 1
+            kwargs[kwarg] = value
+        n += 1
+    return kwargs
 
 
 service_chars = ''

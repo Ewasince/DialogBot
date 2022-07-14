@@ -28,7 +28,7 @@ class Command:
 
     @kwargs.setter
     def kwargs(self, kwargs_):
-        self.__keys = copy.deepcopy(kwargs_)
+        self.__kwargs = copy.deepcopy(kwargs_)
 
     def get_description_kwargs(self):
         desc_list = []
