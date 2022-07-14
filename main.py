@@ -46,9 +46,9 @@ class Analyzer:
             self.input_ = [n.strip() for n in input('> ').split(' ')]
             command = self.input_[0]
             if command in commands['analyze_words']:
-                self.analyze_words()
+                # self.analyze_words()
             elif command in commands['analyze']:
-                self.analyze_syllables()
+                # self.analyze_syllables()
             elif command in commands['generate_word_1']:
                 self.generate_word_1()
             elif command in commands['generate_word_2']:
@@ -163,53 +163,53 @@ class Analyzer:
             print(word[:-1])
             pass
 
-    def analyze_syllables(self):
-        pathname = test_file if self.input_[1] == 't' else self.input_[1]
-        args = {'-d': False}
-        fill_args(self.input_, args, pos=2)
-        if args['-d']:
-            try:
-                list_files = os.listdir(pathname)
-            except Exception as e:
-                print(e)
-                return
-            for name in list_files:
-                filename = '{}\\{}'.format(pathname, name)
-                self.analyze_syllables_(filename)
-        else:
-            self.analyze_syllables_(pathname)
+    # def analyze_syllables(self):
+    #     pathname = test_file if self.input_[1] == 't' else self.input_[1]
+    #     args = {'-d': False}
+    #     fill_args(self.input_, args, pos=2)
+    #     if args['-d']:
+    #         try:
+    #             list_files = os.listdir(pathname)
+    #         except Exception as e:
+    #             print(e)
+    #             return
+    #         for name in list_files:
+    #             filename = '{}\\{}'.format(pathname, name)
+    #             self.analyze_syllables_(filename)
+    #     else:
+    #         self.analyze_syllables_(pathname)
+    #
+    #     pass
 
-        pass
-
-    def analyze_syllables_(self, filename):
-        text = get_words(filename)
-        syllables = dict()
-        for word in text:
-            n = 0
-            while n <= len(word):
-                if n == 0:
-                    syll = ' ' + word[n]
-                    syllables[syll] = syllables.setdefault(syll, 0) + 1
-                elif n == len(word):
-                    syll = word[n - 1] + ' '
-                    syllables[syll] = syllables.setdefault(syll, 0) + 1
-                else:
-                    syll = word[n - 1] + word[n]
-                    syllables[syll] = syllables.setdefault(syll, 0) + 1
-                letter = word[n] if n < len(word) else ' '
-                # установка средней вероятности появления букв на определённых позициях
-                pos_dict = self.syllables_amount.setdefault(n, dict())
-                pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
-
-                # то же что и выше, только отдельно для каждой длины слов
-                len_dict = self.syllables_pos.setdefault(len(word), dict())
-                pos_dict = len_dict.setdefault(n, dict())
-                pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
-
-                n += 1
-        for i in syllables:
-            self.syllables[i] = self.syllables.setdefault(i, 0) + syllables[i]
-        print('{} finished'.format(filename))
+    # def analyze_syllables_(self, filename):
+    #     text = get_words(filename)
+    #     syllables = dict()
+    #     for word in text:
+    #         n = 0
+    #         while n <= len(word):
+    #             if n == 0:
+    #                 syll = ' ' + word[n]
+    #                 syllables[syll] = syllables.setdefault(syll, 0) + 1
+    #             elif n == len(word):
+    #                 syll = word[n - 1] + ' '
+    #                 syllables[syll] = syllables.setdefault(syll, 0) + 1
+    #             else:
+    #                 syll = word[n - 1] + word[n]
+    #                 syllables[syll] = syllables.setdefault(syll, 0) + 1
+    #             letter = word[n] if n < len(word) else ' '
+    #             # установка средней вероятности появления букв на определённых позициях
+    #             pos_dict = self.syllables_amount.setdefault(n, dict())
+    #             pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
+    #
+    #             # то же что и выше, только отдельно для каждой длины слов
+    #             len_dict = self.syllables_pos.setdefault(len(word), dict())
+    #             pos_dict = len_dict.setdefault(n, dict())
+    #             pos_dict[letter] = pos_dict.setdefault(letter, 0) + 1
+    #
+    #             n += 1
+    #     for i in syllables:
+    #         self.syllables[i] = self.syllables.setdefault(i, 0) + syllables[i]
+    #     print('{} finished'.format(filename))
 
     # def analyze_words(self):
     #     filename = test_file if self.input_[1] == 't' else self.input_[1]

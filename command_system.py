@@ -36,5 +36,5 @@ class Command:
             desc_list.append((k, self.__kwargs[k]))
         return desc_list
 
-    def process(self, *args):
+    def process(self, input_, **kwargs):
         pass
