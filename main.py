@@ -1,5 +1,6 @@
 import os
 import random
+from threading import Thread
 
 from tools import get_words, show_list, fill_args
 from operator import itemgetter
@@ -8,23 +9,16 @@ from copy import copy, deepcopy
 import json, requests
 from command_system import command_list
 import importlib
+from client import Client
+from settings import server_url
 
 
 def main():
     load_modules()
+    client = Client(server_url)
+    client.start()
     analyzer = Analyzer()
     analyzer.console()
-
-
-#
-# def get_answer(body):
-#     # Сообщение по умолчанию если распознать не удастся
-#     message = "Прости, не понимаю тебя. Напиши 'помощь', чтобы узнать мои команды"
-#     attachment = ''
-#     for c in command_list:
-#         if body in c.keys:
-#             message, attachment = c.process()
-#     return message, attachment
 
 
 class Analyzer:
@@ -43,8 +37,8 @@ class Analyzer:
                 if command in c.keys:
                     kwargs = c.kwargs
                     if len(kwargs) > 0:
-                        kwargs = fill_args(self.input_, kwargs)
-                    c.process(self.input_, kwargs)
+                        kwargs = fill_args(self.input_)
+                    c.process(self.input_, **kwargs)
                     flag = False
                     break
             if flag:

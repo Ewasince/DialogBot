@@ -3,7 +3,7 @@ import os
 from tabulate import tabulate
 
 
-def help(input_, kwargs):
+def help(input_):
     c: command_system.Command
     message = []
     for c in command_system.command_list:

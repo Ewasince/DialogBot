@@ -40,12 +40,13 @@ def show_list(list_, num_row=1, reversed=True):
     print(tabulate(items))
 
 
-def fill_args(input_, kwargs):
+def fill_args(input_):
     n = 0
+    kwargs = {}
     while len(input_) > n:
         item = input_[n]
         if item[0] == '-':
-            kwarg = input_.pop(n)
+            kwarg = 'key_' + input_.pop(n)[1:]
             value = True
             if len(input_) >= n + 1:
                 if input_[n][0] != '-':

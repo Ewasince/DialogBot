@@ -5,7 +5,7 @@ import requests
 from client import list_clients, Client
 
 
-def request_data(input_, kwargs):
+def request_data(input_, **kwargs):
     if len(list_clients) == 1:
         client: Client = list_clients[0]
         data = client.request_data()

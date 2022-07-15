@@ -4,9 +4,9 @@ from tools import alphabet
 from tabulate import tabulate
 
 
-def show_syllables(input_, kwargs):
+def show_syllables(input_, **kwargs):
     amounts = list()
-    if kwargs['-p']:
+    if kwargs.setdefault('key_p', False):
         for ni, i in enumerate(alphabet):
             amounts.append(0)
             for nj, j in enumerate(alphabet):
@@ -21,7 +21,7 @@ def show_syllables(input_, kwargs):
         for nj, j in enumerate(alphabet):
             key = i + j
             value = generator.syllables.setdefault(key, 0)
-            if kwargs['-p']:
+            if kwargs.setdefault('key_p', False):
                 value = round(value * 100 / amounts[ni], 2)
             syllables[ni].append(value)
     pass

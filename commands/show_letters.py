@@ -4,7 +4,7 @@ from tools import alphabet
 from tabulate import tabulate
 
 
-def show_letters(input_, kwargs):
+def show_letters(input_, **kwargs):
     letters = dict()
     dict_len = len(generator.syllables_amount)
     amount_freq = dict()

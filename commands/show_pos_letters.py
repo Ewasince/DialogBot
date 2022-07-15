@@ -4,7 +4,7 @@ from tools import alphabet
 from tabulate import tabulate
 
 
-def show_pos_letters(input_, kwargs):
+def show_pos_letters(input_, **kwargs):
     print('this option not filled yet')
     pass
 

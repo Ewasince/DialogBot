@@ -1,7 +1,7 @@
 import command_system
 
 
-def test(input_, kwargs):
+def test(input_, **kwargs):
     print('not filled')
 
 

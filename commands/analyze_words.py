@@ -5,7 +5,7 @@ from tools import show_list, get_words, save_dict
 from settings import test_filename
 
 
-def analyze_words(input_, kwargs):
+def analyze_words(input_, **kwargs):
     pathname = test_filename if input_[0] == 't' else input_[0]
 
     len_dict = dict()

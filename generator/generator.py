@@ -4,7 +4,7 @@ syllables = dict()
 syllables_amount = dict()
 
 
-def generate_word_1(kwargs):
+def generate_word_1(**kwargs):
     if len(syllables) == 0:
         return ' no data'
     word = ''
@@ -31,7 +31,7 @@ def generate_word_1(kwargs):
     pass
 
 
-def generate_word_2(kwargs):
+def generate_word_2(**kwargs):
     if len(syllables) == 0:
         return 'no data'
     word = ''
@@ -53,7 +53,7 @@ def generate_word_2(kwargs):
             pos_dict = syllables_amount.setdefault(num, dict())
             w2 = pos_dict.setdefault(next_letter, 0)
 
-            if kwargs['-m']:
+            if kwargs.setdefault('key_m', False):
                 def calc_weight(x1, x2):
                     return (x1 ** 2 + x2 ** 2) ** 0.5
             else:
@@ -74,5 +74,5 @@ def generate_word_2(kwargs):
         return word[:-1]
 
 
-def generate_word_3(kwargs):
+def generate_word_3(**kwargs):
     pass

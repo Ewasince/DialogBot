@@ -19,7 +19,7 @@ class Command:
         for k in mas:
             self.__keys.append(k)
 
-    @property
+    @property # TODO: убрать
     def kwargs(self):
         return_dict = {}
         for k in self.__kwargs:
