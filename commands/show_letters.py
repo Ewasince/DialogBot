@@ -2,20 +2,25 @@ from generator import generator
 import command_system
 from tools import alphabet
 from tabulate import tabulate
+from generator.generator import refresh_dicts
 
 
 def show_letters(input_, **kwargs):
+    if refresh_dicts():
+        print('no data')
+        return
     letters = dict()
-    dict_len = len(generator.syllables_amount)
+    letters_pos = generator.tables['letters_pos']
+    dict_len = len(letters_pos)
     amount_freq = dict()
     for pos in range(dict_len):
-        letter_freq_dict: dict = generator.syllables_amount[pos]
+        letter_freq_dict: dict = letters_pos[pos]
         for letter in alphabet:
             frequency = letter_freq_dict.setdefault(letter, 0)
             amount_freq[pos] = amount_freq.setdefault(pos, 0) + frequency
 
     for pos in range(dict_len):
-        letter_freq_dict: dict = generator.syllables_amount[pos]
+        letter_freq_dict: dict = letters_pos[pos]
         for letter in alphabet:
             frequency = letter_freq_dict.setdefault(letter, 0)
             letters[letter] = letters.setdefault(letter, list())

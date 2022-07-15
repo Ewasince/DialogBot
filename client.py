@@ -5,7 +5,6 @@ import threading
 import time
 from vkapi import send_message
 from generator.generator import generate_word_2
-import
 
 list_clients = []
 
@@ -18,25 +17,27 @@ class Client:
         self.url = url
         self.data = []
         self.lock_obj = threading.Lock()
+        self.is_continue = True
         list_clients.append(self)
         pass
 
     def start(self):
-        thread = threading.Thread(target=self.loop_connect())
+        thread = threading.Thread(target=self.loop_connect)
         thread.start()
 
+    def stop(self):
+        self.is_continue = False
+
     def loop_connect(self):
-        while True:
+        time.sleep(2)
+        while self.is_continue:
             self.check_messages()
-        pass
+            time.sleep(1)
+        print('client stopped')
 
     def check_messages(self):
-        # response = requests.get(self.url)  # ???
-        # data: dict = json.loads(response.text)
-        # texts = []
         self.request_data()
         self.process_data()
-        time.sleep(1)
         pass
 
     def request_data(self):
@@ -55,14 +56,17 @@ class Client:
 
         while len(self.data) > 0:
             data: dict = self.data.pop(0)
-            text = data['object']['message']['text']
-            user_id = data['object']['message']['from_id']
-            message = generate_word_2()
-            try:
-                send_message(str(user_id), message)
-                print('message has been sent')
-            except Exception as e:
-                print(e)
+            if data['type'] == 'message_new':
+                text = data['object']['message']['text']
+                user_id = data['object']['message']['from_id']
+                message = generate_word_2(**{'key_m': True})
+                try:
+                    send_message(str(user_id), message)
+                    print('message has been sent')
+                except Exception as e:
+                    print(e)
+            else:
+                pass
         self.lock_obj.release()
 
     pass

@@ -2,9 +2,13 @@ from generator import generator
 import command_system
 from tools import alphabet
 from tabulate import tabulate
+from generator.generator import refresh_dicts
 
 
 def show_pos_letters(input_, **kwargs):
+    if refresh_dicts():
+        print('no data')
+        return
     print('this option not filled yet')
     pass
 

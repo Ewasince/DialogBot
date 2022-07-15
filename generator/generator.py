@@ -1,18 +1,24 @@
+import json
+import os.path
 import random
+from settings import data_dir
+from tools import check_path
 
-syllables = dict()
-syllables_amount = dict()
+tables = dict()
+tables_time = {'syll_freq': 0, 'letters_pos': 0, 'letters_pos_by_word': 0, 'words_len': 0}
+for n in tables_time:
+    tables[n] = dict()
 
 
 def generate_word_1(**kwargs):
-    if len(syllables) == 0:
-        return ' no data'
+    if refresh_dicts():
+        return 'no data'
+    syll_freq = tables['syll_freq']
     word = ''
     num = 0
     flag = True
     while flag:
-        keys = syllables.keys()
-        keys_ = list()
+        keys = syll_freq.keys()
         if num == 0:
             keys_ = [n for n in keys if n[0] == ' ']
         else:
@@ -21,7 +27,7 @@ def generate_word_1(**kwargs):
         weights = list()
         for i in keys_:
             values.append(i[1])
-            weights.append(syllables[i])
+            weights.append(syll_freq[i])
         letter = random.choices(values, weights=weights)
         word += letter[0]
 
@@ -32,13 +38,15 @@ def generate_word_1(**kwargs):
 
 
 def generate_word_2(**kwargs):
-    if len(syllables) == 0:
+    if refresh_dicts():
         return 'no data'
+    syll_freq = tables['syll_freq']
+    letters_pos = tables['letters_pos']
     word = ''
     num = 0
     flag = True
     while flag:
-        keys = syllables.keys()
+        keys = syll_freq.keys()
         keys_ = list()
         if num == 0:
             keys_ = [n for n in keys if n[0] == ' ']
@@ -47,10 +55,10 @@ def generate_word_2(**kwargs):
         values = list()
         weights = list()
         for i in keys_:
-            values.append(i[1])
             next_letter = i[1]
-            w1 = syllables[i]
-            pos_dict = syllables_amount.setdefault(num, dict())
+            values.append(next_letter)
+            w1 = syll_freq[i]
+            pos_dict = letters_pos.setdefault(str(num), dict())
             w2 = pos_dict.setdefault(next_letter, 0)
 
             if kwargs.setdefault('key_m', False):
@@ -69,10 +77,26 @@ def generate_word_2(**kwargs):
         letter = random.choices(values, weights=weights)
         word += letter[0]
 
-        if word[-1] == ' ': flag = False
+        if word[-1] == ' ':
+            flag = False
         num += 1
-        return word[:-1]
+    return word[:-1]
 
 
 def generate_word_3(**kwargs):
+    if refresh_dicts():
+        return 'no data'
     pass
+
+
+def refresh_dicts():
+    check_path(data_dir)
+    for name in tables_time:
+        filename = '{}\\{}.json'.format(data_dir, name)
+        if not os.path.exists(filename):
+            return True
+        last_time_modified = os.path.getmtime(filename)
+        if tables_time[name] < last_time_modified:
+            with open(filename) as f:
+                tables[name] = json.load(f)
+            tables_time[name] = last_time_modified

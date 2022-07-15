@@ -3,12 +3,13 @@ import os, json
 import command_system
 from tools import show_list, get_words, save_dict
 from settings import test_filename
+from generator.analyzer import Analyzer
 
 
 def analyze_words(input_, **kwargs):
     pathname = test_filename if input_[0] == 't' else input_[0]
 
-    len_dict = dict()
+    analyzer = Analyzer()
 
     if os.path.isdir(pathname):
         try:
@@ -18,24 +19,14 @@ def analyze_words(input_, **kwargs):
             return
         for fname in list_files:
             filename = '{}\\{}'.format(pathname, fname)
-            analyze_freq_file(filename, len_dict)
+            text = get_words(filename)
+            analyzer.analyze_words_len(filename)
     else:
-        analyze_freq_file(pathname, len_dict)
+        text = get_words(pathname)
+        analyzer.analyze_words_len(pathname)
 
-    new_values = save_dict('words_len', len_dict)
+    new_values = save_dict('words_len', analyzer.words_len)
     show_list(new_values, num_row=0, reversed=False)
-
-
-def analyze_freq_file(filename, len_dict):
-    text = get_words(filename)
-    for word in text:
-        word_len = str(len(word))
-        len_dict[word_len] = len_dict.setdefault(word_len, 0) + 1
-    # amount_words = len(text)
-    # for length in len_dict:
-    #     len_dict[length] = len_dict[length] / amount_words
-    # show_list(len_dict, num_row=0, reversed=False)
-    print('{} finished'.format(filename))
 
 
 # def analyze_amount_words_file(filename):

@@ -2,16 +2,22 @@ from generator import generator
 import command_system
 from tools import alphabet
 from tabulate import tabulate
+from generator.generator import refresh_dicts
 
 
 def show_syllables(input_, **kwargs):
+    if refresh_dicts():
+        print('no data')
+        return
     amounts = list()
+    tables = generator.tables
+    syll_freq = tables['syll_freq']
     if kwargs.setdefault('key_p', False):
         for ni, i in enumerate(alphabet):
             amounts.append(0)
             for nj, j in enumerate(alphabet):
                 key = i + j
-                value = generator.syllables.setdefault(key, 0)
+                value = syll_freq.setdefault(key, 0)
                 amounts[ni] += value
 
     syllables = []
@@ -20,7 +26,7 @@ def show_syllables(input_, **kwargs):
         syllables[ni].append(i)
         for nj, j in enumerate(alphabet):
             key = i + j
-            value = generator.syllables.setdefault(key, 0)
+            value = syll_freq.setdefault(key, 0)
             if kwargs.setdefault('key_p', False):
                 value = round(value * 100 / amounts[ni], 2)
             syllables[ni].append(value)

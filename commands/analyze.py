@@ -19,14 +19,16 @@ def analyze(input_, **kwargs):
     else:
         analyzer.analyze(pathname)
 
-    last_values_1 = save_dict('syll_freq', analyzer.syll_dict)
-    last_values_2 = save_dict('letters_freq_pos', analyzer.letter_pos)
-    last_values_3 = save_dict('letters_freq_pos_by_word', analyzer.letter_pos_by_word)
+    last_values_1 = save_dict('syll_freq', analyzer.syll_freq)
+    last_values_2 = save_dict('letters_pos', analyzer.letter_pos)
+    last_values_3 = save_dict('letters_pos_by_word', analyzer.letter_pos_by_word)
+    last_values_4 = save_dict('words_len', analyzer.words_len)
 
     if kwargs.setdefault('key_a', False):
         show_list(last_values_1, num_row=0, reversed=False)
         show_list(last_values_2, num_row=0, reversed=False)
         show_list(last_values_3, num_row=0, reversed=False)
+        show_list(last_values_4, num_row=0, reversed=False)
 
 
 analyze_command = command_system.Command()

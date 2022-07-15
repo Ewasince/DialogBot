@@ -17,15 +17,15 @@ def main():
     load_modules()
     client = Client(server_url)
     client.start()
-    analyzer = Analyzer()
-    analyzer.console()
+    console = Console()
+    console.start()
 
 
-class Analyzer:
+class Console:
     def __init__(self):
         self.input_ = ['']
 
-    def console(self):
+    def start(self):
         print('type \'help\' for more information')
         command = ''
         while command not in commands['quit']:
