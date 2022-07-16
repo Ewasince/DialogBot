@@ -1,5 +1,5 @@
 from generator.generator import *
-import command_system
+from commands import local_command_system
 
 
 def generate(input_, **kwargs):
@@ -21,7 +21,7 @@ def generate(input_, **kwargs):
         print(word)
 
 
-generate_word_command = command_system.Command()
+generate_word_command = local_command_system.Command()
 
 generate_word_command.keys = ['generate_word', 'gw']
 generate_word_command.description = 'generate new word(s)'

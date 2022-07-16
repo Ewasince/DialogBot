@@ -1,6 +1,6 @@
-import os, json
+import os
 
-import command_system
+from commands import local_command_system
 from tools import show_list, get_words, save_dict
 from settings import test_filename
 from generator.analyzer import Analyzer
@@ -46,7 +46,7 @@ def analyze_words(input_, **kwargs):
 #     print('')
 
 
-analyze_words_command = command_system.Command()
+analyze_words_command = local_command_system.Command()
 
 analyze_words_command.keys = ['analyze_words', 'aw']
 analyze_words_command.description = 'analyze number of words occurrences command'

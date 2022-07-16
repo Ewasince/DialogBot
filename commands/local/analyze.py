@@ -1,7 +1,7 @@
 import os
 from settings import test_filename
-import command_system
-from tools import show_list, get_words, check_path, save_dict
+from commands import local_command_system
+from tools import show_list, save_dict
 from generator.analyzer import Analyzer
 
 data_dir = 'data'
@@ -31,7 +31,7 @@ def analyze(input_, **kwargs):
         show_list(last_values_4, num_row=0, reversed=False)
 
 
-analyze_command = command_system.Command()
+analyze_command = local_command_system.Command()
 
 analyze_command.keys = ['analyze', 'a']
 analyze_command.description = 'analyze text for generating new content'

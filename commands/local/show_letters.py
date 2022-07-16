@@ -1,5 +1,5 @@
 from generator import generator
-import command_system
+from commands import local_command_system
 from tools import alphabet
 from tabulate import tabulate
 from generator.generator import refresh_dicts
@@ -35,7 +35,7 @@ def show_letters(input_, **kwargs):
     pass
 
 
-show_letters_command = command_system.Command()
+show_letters_command = local_command_system.Command()
 
 show_letters_command.keys = ['show_letters', 'sl']
 show_letters_command.description = 'show number of letters occurrences'

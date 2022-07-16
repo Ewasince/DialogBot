@@ -8,6 +8,7 @@ class Command:
         self.__keys = []
         self.description = ''
         self.__kwargs = {}
+        self.only_client = True
         command_list.append(self)
 
     @property

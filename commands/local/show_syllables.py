@@ -1,5 +1,5 @@
 from generator import generator
-import command_system
+from commands import local_command_system
 from tools import alphabet
 from tabulate import tabulate
 from generator.generator import refresh_dicts
@@ -36,7 +36,7 @@ def show_syllables(input_, **kwargs):
     print(tabulate(syllables, headers=headers, tablefmt="pretty"))
 
 
-show_syllables_command = command_system.Command()
+show_syllables_command = local_command_system.Command()
 
 show_syllables_command.keys = ['show_syllables', 'ss']
 show_syllables_command.description = 'show number of syllables occurrences'
