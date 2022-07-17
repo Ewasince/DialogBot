@@ -8,7 +8,7 @@ from commands.bot_command_system.bot_command_system import process_message
 command_list = []
 
 
-def generate_word(input_):
+def generate_word(input_, **kwargs):
     result = process_message(input_, command_list)
     if result is None:
         for c in command_list:

@@ -44,14 +44,14 @@ def load_bot_modules(path):
         importlib.import_module(m)
 
 
-def process_message(message, cmd_list):
+def process_message(message, cmd_list, **kwargs):
     input_ = message.strip()
 
     for c in cmd_list:
         for key in c.keys:
             if input_.find(key) == 0:
                 input_ = input_[len(key):]
-                result = c.process(input_)
+                result = c.process(input_, **kwargs)
                 return result
     return None
 

@@ -7,7 +7,7 @@ import generator.generator as g
 command_list = []
 
 
-def second_alg(input_):
+def second_alg(input_, **kwargs):
     g.refresh_dicts()
     result = g.generate_word_2()
     return result

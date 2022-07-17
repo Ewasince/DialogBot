@@ -58,11 +58,13 @@ def fill_args(input_):
 
 
 def check_path(path: str):
-    dirs = path.split('\\')
-    for n, d in enumerate(dirs):
-        cur_path = '\\'.join(dirs[0:n + 1])
-        if not os.path.exists(cur_path):
-            os.mkdir(cur_path)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    # dirs = path.split('\\')
+    # for n, d in enumerate(dirs):
+    #     cur_path = '\\'.join(dirs[0:n + 1])
+    #     if not os.path.exists(cur_path):
+    #         os.mkdir(cur_path)
 
 
 def save_dict(filename, dictionary):
