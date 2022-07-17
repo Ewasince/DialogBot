@@ -44,5 +44,17 @@ def load_bot_modules(path):
         importlib.import_module(m)
 
 
+def process_message(message, cmd_list):
+    input_ = message.strip()
+
+    for c in cmd_list:
+        for key in c.keys:
+            if input_.find(key) == 0:
+                input_ = input_[len(key):]
+                result = c.process(input_)
+                return result
+    return None
+
+
 load_bot_modules(bot_commands_dir)
 pass

@@ -3,8 +3,8 @@ import threading
 import vkapi
 from vkapi import send_message, longpoll
 from vk_api.bot_longpoll import VkBotEventType
-from generator.generator import generate_word_2
 from commands.bot_command_system.bot_command_system import command_list as command_list
+from commands.bot_command_system.bot_command_system import process_message
 
 list_clients = []
 lock_obj = threading.Lock()
@@ -31,40 +31,33 @@ def stop():
 
 def process_event(event):
     lock_obj.acquire()
-    if event.type == VkBotEventType.MESSAGE_NEW:
-        if event.from_chat:
-            chat_id = event.chat_id
-            message = event.message
+    try:
+        if event.type == VkBotEventType.MESSAGE_NEW:
+            if event.from_chat:
+                chat_id = event.chat_id
+                message = event.message['text']
 
-            result = process_message(message)
-            if result is not None:
-                vkapi.send_message(chat_id, result)
-                return
+                result = process_message(message, command_list)
+                if result is not None:
+                    vkapi.send_message(chat_id, result)
+                    return
 
-            try:
-                dey = event.message.action['type']
-                invite_id = event.message.action['member_id']
-            except:
-                dey = ''
-                invite_id = -100
+                try:
+                    dey = event.message.action['type']
+                    invite_id = event.message.action['member_id']
+                except:
+                    dey = ''
+                    invite_id = -100
 
-            if dey == 'chat_invite_user':
-                vkapi.send_message(chat_id, f'опа, @id{invite_id} вылез')
+                if dey == 'chat_invite_user':
+                    vkapi.send_message(chat_id, f'опа, @id{invite_id} вылез')
 
-            if message == 'привет':
-                vkapi.send_message(chat_id, 'приветствую!')
-
-
-def process_message(message):
-    input_ = message.strip()
-
-    for c in command_list:
-        for key in c.keys:
-            if input_.find(key) == 0:
-                input_ = input_[len(key):]
-                result = c.process(input_)
-                return result
-    return None
+                if message == 'привет':
+                    vkapi.send_message(chat_id, 'приветствую!')
+    finally:
+        lock_obj.release()
 
 
 pass
+
+

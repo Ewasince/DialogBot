@@ -9,6 +9,7 @@ command_list = []
 def help(input_, **kwargs):
     if input_ == '':
         return_message = desc_leaves(bot_command_system.command_list)
+        return_message = '\n'.join(return_message)
     else:
         return_message = desc_branches(bot_command_system.command_list, input_)
     return return_message
@@ -16,16 +17,20 @@ def help(input_, **kwargs):
 
 def desc_leaves(iter_command_list):
     c: bot_command_system.Command
-    return_message = ''
+    result = list()
     for c in iter_command_list:
+        desc_item = f'{c.keys[0]} - {c.description}'
         if len(c.own_store) > 0:
-            return_message_ = desc_leaves(c.own_store).replace('\n', '\n|')
-            return_message_ = return_message_[:-1]
-            return_message_ = '{}\n|{}'.format(c.keys[0], return_message_)
-            return_message += return_message_
+            result.append(desc_item)
+            desc_children = desc_leaves(c.own_store)
+            for line in desc_children:
+                if line[0] == '|':
+                    result.append(f'|{line}')
+                else:
+                    result.append(f'| {line}')
         else:
-            return_message += '{}\n'.format(c.keys[0], c.description)
-    return return_message
+            result.append(desc_item)
+    return result
 
 
 def desc_branches(commands, input_):
@@ -40,7 +45,10 @@ def desc_branches(commands, input_):
                 if len(c.own_store) > 0 and len(input_):
                     return desc_branches(c.own_store, input_)
                 else:
-                    return c.description
+                    keys_str = [f'\'{k}\'' for k in c.keys]
+                    result = ', '.join(keys_str)
+                    result = f'{result} - {c.description}'
+                    return result
     return 'команда не найдена'
 
 

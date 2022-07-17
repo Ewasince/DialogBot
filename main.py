@@ -8,6 +8,7 @@ from settings import local_commands_dir
 import commands.bot_command_system.bot_command_system as b_cmd
 
 is_continue = True
+is_continue_bot = True
 
 
 def main():
@@ -35,23 +36,6 @@ def start_console():
                 break
         if flag:
             print('unknown command \'{}\''.format(command))
-        pass
-    pass
-
-
-def start_console_alt():
-    commands = b_cmd.command_list
-    while is_continue:
-        raw_import = input('> ')
-        input_ = raw_import.strip()
-
-        for c in commands:
-            for key in c.keys:
-                if input_.find(key) == 0:
-                    input_ = input_[len(key):]
-                    mes = c.process(input_)
-                    print(mes)
-                    break
         pass
     pass
 

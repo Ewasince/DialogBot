@@ -2,12 +2,15 @@ import os
 
 from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.generate_word.generate_word import command_list as parent_cl
+import generator.generator as g
 
 command_list = []
 
 
-def third_alg(input_, **kwargs):
-    return 'not filled'
+def third_alg(input_):
+    g.refresh_dicts()
+    result = g.generate_word_3()
+    return result
 
 
 rel_module_path = os.path.relpath(os.path.dirname(__file__))
