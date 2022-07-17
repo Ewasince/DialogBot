@@ -1,7 +1,7 @@
 import os
 
 from commands.bot_command_system import bot_command_system
-from commands.bot_command_system.generate_word.generate_word import command_list as parent_cl
+from commands.bot_command_system.generate.generate_word import command_list as parent_cl
 import generator.generator as g
 
 command_list = []

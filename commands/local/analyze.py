@@ -3,6 +3,7 @@ from settings import test_filename
 from commands import local_command_system
 from tools import show_list, save_dict
 from generator.analyzer import Analyzer
+from tools import get_words
 
 data_dir = 'data'
 
@@ -15,9 +16,13 @@ def analyze(input_, **kwargs):
     if os.path.isdir(pathname):
         for fname in os.listdir(pathname):
             filename = '{}\\{}'.format(pathname, fname)
-            analyzer.analyze(filename)
+            text = get_words(filename)
+            analyzer.analyze(text)
+            print('{} finished'.format(filename))
     else:
-        analyzer.analyze(pathname)
+        text = get_words(pathname)
+        analyzer.analyze(text)
+        print('{} finished'.format(pathname))
 
     last_values_1 = save_dict('syll_freq', analyzer.syll_freq)
     last_values_2 = save_dict('letters_pos', analyzer.letter_pos)

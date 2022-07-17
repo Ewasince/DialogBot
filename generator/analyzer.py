@@ -8,8 +8,7 @@ class Analyzer:
         self.letter_pos_by_word = {}
         self.words_len = {}
 
-    def analyze(self, filename):
-        text = get_words(filename)
+    def analyze(self, text):
         for word in text:
             n = 0
             while n <= len(word):
@@ -24,7 +23,6 @@ class Analyzer:
                 n += 1
 
             self.analyze_words_len(text)
-        print('{} finished'.format(filename))
 
     def analyze_syllables(self, n, word):
         if n == 0:

@@ -3,6 +3,7 @@ import main
 
 
 def quit_(input_, **kwargs):
+    # main.is_continue = False
     main.stop_console()
     print('exiting from app')
 

@@ -34,18 +34,28 @@ def analyze_chat(input_, **kwargs):
         # process_messages()
     pass
 
-    # path = f'{data_chats_dir}\\{str(chat_id)}'
-    # messages_loaded: dict
-    filename = f'{data_chats_dir}\\{str(chat_id)}'
-    if not os.path.exists(data_chats_dir):
-        os.makedirs(data_chats_dir)
+    # TODO: мутный алгоритм, лучше сделать так, чтобы он сначала загружал, смотрел послежний элемент и загружал с последнего элемента
+    path = f'{data_chats_dir}\\{str(chat_id)}'
+    messages_analyze = dict()
+    filename = f'{path}\\messages'
+    if not os.path.exists(path):
+        os.makedirs(path)
     if os.path.exists(filename):
         with open(filename, 'rb') as f:
             messages_loaded = pickle.load(f)
+            messages_loaded_set = set(messages_loaded)
+            messages_set = set(messages)
+            new_items_set = messages_set - messages_loaded_set
+            for k in new_items_set:
+                messages_analyze[k] = messages[k]
             messages_loaded.update(messages)
             messages = messages_loaded
     with open(filename, 'wb') as f:
         pickle.dump(messages, f)
+        messages_analyze = messages
+
+    # analyze(messages_analyze)
+
 
     return random.choices(replies, k=1)[0]
 

@@ -73,6 +73,7 @@ def process_from_chat(event):
 
 
 
+
 def process_from_ls(event):
     user_id = event.message['from_id']
     vkapi.send_message(user_id,
