@@ -66,8 +66,10 @@ def process_from_chat(event):
                                     f'переписке. Доступные команды можно узнать набрав \'help\'')
         else:
             vkapi.send_message_chat(chat_id, f'опа, @id{member_id} вылез')
+        return
     elif action_type == 'chat_kick_user':
-            vkapi.send_message_chat(chat_id, f'потеряли молодого')
+        vkapi.send_message_chat(chat_id, f'потеряли молодого')
+        return
 
 
 
