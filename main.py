@@ -3,7 +3,7 @@ import os
 from tools import fill_args
 from commands.local_command_system import command_list
 import importlib
-# from client import Client
+import client
 from settings import local_commands_dir
 import commands.bot_command_system.bot_command_system as b_cmd
 
@@ -12,9 +12,9 @@ is_continue = True
 
 def main():
     load_modules()
-    # client.start()
-    # start_console()
-    start_console_alt()
+    client.start()
+    start_console()
+    # start_console_alt()
 
 
 def start_console():

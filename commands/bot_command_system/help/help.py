@@ -6,7 +6,7 @@ from commands.bot_command_system.bot_command_system import command_list as paren
 command_list = []
 
 
-def help_word(input_, **kwargs):
+def help(input_, **kwargs):
     if input_ == '':
         return_message = desc_leaves(bot_command_system.command_list)
     else:
@@ -49,5 +49,5 @@ help_command = bot_command_system.Command(parent_cl, rel_module_path, command_li
 
 help_command.keys = ['help', 'h', 'словоблуд, помощь', 'словоблуд помощь']
 help_command.description = 'генерирование чего-либо'
-help_command.process = help_word
+help_command.process = help
 help_command.kwargs = {}
