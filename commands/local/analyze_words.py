@@ -1,15 +1,16 @@
 import os
 
 from commands import local_command_system
-from tools import show_list, get_words, save_dict
+from tools import show_list
+from generator.analyzer import get_words_file
 from settings import test_filename
-from generator.analyzer import Analyzer
+import generator.analyzer as a
 
 
 def analyze_words(input_, **kwargs):
     pathname = test_filename if input_[0] == 't' else input_[0]
 
-    analyzer = Analyzer()
+    analyzer = a.Analyzer()
 
     if os.path.isdir(pathname):
         try:
@@ -19,14 +20,16 @@ def analyze_words(input_, **kwargs):
             return
         for fname in list_files:
             filename = '{}\\{}'.format(pathname, fname)
-            text = get_words(filename)
+            text = get_words_file(filename)
             analyzer.analyze_words_len(filename)
     else:
-        text = get_words(pathname)
+        text = get_words_file(pathname)
         analyzer.analyze_words_len(pathname)
 
-    new_values = save_dict('words_len', analyzer.words_len)
-    show_list(new_values, num_row=0, reversed=False)
+    all_values = a.save_dict('words_len', analyzer.words_len, fjson=True)
+    # all_values = save_dict('words_len', analyzer.words_len)
+
+    show_list(all_values, num_row=0, reversed=False)
 
 
 # def analyze_amount_words_file(filename):

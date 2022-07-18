@@ -2,19 +2,19 @@ import os
 
 from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.bot_command_system import command_list as parent_cl
-from commands.bot_command_system.bot_command_system import process_message
+from commands.bot_command_system.bot_command_system import process_command
 # from commands.bot_command_system.generate.second.second import second_alg
 
 command_list = []
 
 
 def generate_word(input_, **kwargs):
-    result = process_message(input_, command_list)
-    if result is None:
-        for c in command_list:
-            if 'second' in c.keys:
-                result = command_list
-                break
+    result = process_command(input_, command_list)
+    # if result is None:
+    #     for c in command_list:
+    #         if 'second' in c.keys:
+    #             result = command_list
+    #             break
     return result
 
 

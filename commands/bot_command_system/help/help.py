@@ -54,8 +54,8 @@ def desc_branches(commands, input_):
 
 rel_module_path = os.path.relpath(os.path.dirname(__file__))
 help_command = bot_command_system.Command(parent_cl, rel_module_path, command_list)
-
-help_command.keys = ['help', 'h', 'словоблуд, помощь', 'словоблуд помощь']
+keys = ['help', 'h', 'словоблуд, помощь', 'словоблуд помощь']
+help_command.keys = keys
 help_command.description = 'генерирование чего-либо'
 help_command.process = help
 help_command.kwargs = {}

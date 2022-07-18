@@ -31,7 +31,11 @@ def start_console():
                 kwargs = c.kwargs
                 if len(kwargs) > 0:
                     kwargs = fill_args(input_)
-                c.process(input_, **kwargs)
+                try:
+                    c.process(input_, **kwargs)
+                except Exception as e:
+                    print(e)
+
                 flag = False
                 break
         if flag:

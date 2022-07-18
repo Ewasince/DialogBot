@@ -44,10 +44,11 @@ def load_bot_modules(path):
         importlib.import_module(m)
 
 
-def process_message(message, cmd_list, **kwargs):
+def process_command(message, cmd_list, **kwargs):
     input_ = message.strip()
 
-    for c in cmd_list:
+    for c in cmd_list: # TODO: сделать так, чтобы если команда удовлетворяла условиям, но после нее были невалидные кварги, она не срабатывала, путём выдачи None
+        # TODO: скорее всего нужно будет в вызов команды добавить кварг о несрабатывании нее, чтобы можно было ипользовать встроенную функцию выполнения комманд
         for key in c.keys:
             if input_.find(key) == 0:
                 input_ = input_[len(key):]

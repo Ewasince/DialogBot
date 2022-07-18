@@ -4,7 +4,7 @@ import vkapi
 from vkapi import send_message_chat, longpoll
 from vk_api.bot_longpoll import VkBotEventType
 from commands.bot_command_system.bot_command_system import command_list as command_list
-from commands.bot_command_system.bot_command_system import process_message
+from commands.bot_command_system.bot_command_system import process_command
 from settings import bot_name
 
 list_clients = []
@@ -46,7 +46,7 @@ def process_from_chat(event):
     chat_id = event.chat_id
     message = event.message['text']
 
-    result = process_message(message, command_list, chat_id=chat_id, event=event)
+    result = process_command(message, command_list, chat_id=chat_id, event=event)
     if result is not None:
         vkapi.send_message_chat(chat_id, result)
         return
