@@ -5,6 +5,8 @@ from vkapi import send_message_chat, longpoll
 from vk_api.bot_longpoll import VkBotEventType
 from commands.bot_command_system.bot_command_system import command_list as command_list
 from commands.bot_command_system.bot_command_system import process_command
+from commands.bot_command_system.analyze.analyze import analyze_new_message, analyze_chat
+from commands.bot_command_system.generate.replica.replica import new_replica
 from settings import bot_name
 
 list_clients = []
@@ -64,12 +66,22 @@ def process_from_chat(event):
             vkapi.send_message_chat(chat_id,
                                     f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
                                     f'переписке. Доступные команды можно узнать набрав \'help\'')
+            analyze_chat(message, chat_id=chat_id, event=event)
+            pass
         else:
             vkapi.send_message_chat(chat_id, f'опа, @id{member_id} вылез')
         return
     elif action_type == 'chat_kick_user':
         vkapi.send_message_chat(chat_id, f'потеряли молодого')
         return
+
+    analyze_new_message(message, event=event)
+    # conversation_message_id = message_obj['conversation_message_id']
+    replica = new_replica(message, chat_id=chat_id, event=event)
+    vkapi.send_message_chat(chat_id, replica)
+
+
+
 
 
 
