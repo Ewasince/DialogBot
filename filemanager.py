@@ -14,11 +14,8 @@ def save_class_properties(date_analyzer: Date_analyzer, path=data_dir):
             loaded_prop = pickle.load(f)
     else:
         loaded_prop = {'amount_mes': 0, 'average_mes': 0, 'current_day': 0, 'last_date': 0, 'last_id': 0}
-    gen_amount = loaded_prop.setdefault('amount_mes', 0) + date_analyzer.amount_mes
-    gen_average = (loaded_prop['amount_mes'] * loaded_prop.
-                   setdefault('average_mes', 0) + date_analyzer.amount_mes * date_analyzer.average_mes) / gen_amount
-    loaded_prop['amount_mes'] = gen_amount
-    loaded_prop['average_mes'] = gen_average
+    loaded_prop['amount_mes'] = date_analyzer.amount_mes
+    loaded_prop['average_mes'] = date_analyzer.average_mes
     loaded_prop['current_day'] = date_analyzer.current_day
     loaded_prop['last_date'] = date_analyzer.last_date
     with open(filename, 'wb') as f:
@@ -40,7 +37,7 @@ def load_properties(path=data_dir) -> dict:
 
 
 def refresh_properties(path=data_dir, **kwargs):
-    properties = load_properties()
+    properties = load_properties(path)
     for k in kwargs:
         properties[k] = kwargs[k]
     save_properties(properties, path)

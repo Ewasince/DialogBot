@@ -7,7 +7,7 @@ from commands.bot_command_system.generate.generate import command_list as parent
 import generator.generator as g
 from settings import data_chats_dir
 from commands.bot_command_system.analyze.analyze import Message
-from generator.generator import Chat_generator
+from generator.generator import ChatGenerator
 import commands.bot_command_system.analyze.analyze as analyze
 
 command_list = []
@@ -22,7 +22,7 @@ def new_replica(input_, chat_id=None, **kwargs):
         analyze.analyze_chat(input_, **kwargs)
     with open(filename, 'rb') as f:
         messages = pickle.load(f)
-    generator = Chat_generator(messages)
+    generator = ChatGenerator(messages)
     message = generator.generate_replica()
 
     return message

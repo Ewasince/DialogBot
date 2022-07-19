@@ -59,7 +59,7 @@ def analyze_chat(input_, **kwargs):
     messages_loaded.extend(new_messages)
 
     save_data(analyzer, path=path, fjson=False)
-    save_class_properties(analyzer.date_analyzer, path=path)
+    # save_class_properties(analyzer.date_analyzer, path=path)
     with open(filename, 'wb') as f:
         pickle.dump(messages_loaded, f)
     return random.choice(replies)
@@ -85,7 +85,7 @@ def analyze_new_message(_input, **kwargs):
     if not analyze_message(analyzer, from_id, text, date):
         return
     save_data(analyzer, path=path, fjson=False)
-    save_class_properties(analyzer.date_analyzer, path=path)
+    # save_class_properties(analyzer.date_analyzer, path=path)
 
     filename = f'{path}\\messages'
     if os.path.exists(filename):
@@ -96,7 +96,8 @@ def analyze_new_message(_input, **kwargs):
 
     conversation_message_id = message_obj['conversation_message_id']
     attachments = message_obj['attachments']
-    messages_loaded.append(Message(conversation_message_id, text, attachments, from_id))
+    date = message_obj['date']
+    messages_loaded.append(Message(conversation_message_id, text, attachments, from_id, date))
     with open(filename, 'wb') as f:
         pickle.dump(messages_loaded, f)
     pass

@@ -142,7 +142,7 @@ def refresh_dicts():
             tables_time[name] = last_time_modified
 
 
-class Chat_generator:
+class ChatGenerator:
     def __init__(self, messages):
         self.messages = messages
 
@@ -160,7 +160,7 @@ class Chat_generator:
 
     @staticmethod
     def get_num_parts():
-        num_parts = random.lognormvariate(0.4, 0.4)
+        num_parts = random.lognormvariate(0.6, 0.35)
         return num_parts
 
     @staticmethod
@@ -178,10 +178,12 @@ class Chat_generator:
             find_func_ = find_func
             find_func = rfind_func
             rfind_func = find_func_
-        pos1_ = find_func(text, pos1, text_len)
+        # pos1_ = find_func(text, pos1, text_len)
+        # pos2_ = find_func(text, pos2, text_len)
+        pos1_ = rfind_func(text, 0, pos1)
         pos2_ = find_func(text, pos2, text_len)
         if pos1_ == -1:
-            pos1_ = rfind_func(text, 0, pos1)
+            pos1_ = find_func(text, pos1, text_len)
         if pos2_ == -1:
             pos2_ = rfind_func(text, 0, pos2)
         pos1 = 0 if pos1_ == -1 else pos1_

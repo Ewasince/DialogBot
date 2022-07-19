@@ -1,3 +1,4 @@
+import random
 import threading
 import logging
 
@@ -23,10 +24,14 @@ def start():
 
 
 def loop_connect():
-    for event in longpoll.listen():
-        process_event(event)
-        if not is_continue:
-            break
+    while is_continue:
+        try:
+            for event in longpoll.listen():
+                process_event(event)
+                if not is_continue:
+                    break
+        except Exception as e:
+            logger.exception(str(e))
     print('client stopped')
 
 
@@ -48,24 +53,24 @@ def process_event(event):
         lock_obj.release()
 
 
-def proceed_from_chat(event) -> str:
+def proceed_from_chat(event):
     try:
-        result = proceed_message_chat(event)
+        chat_id = event.chat_id
+        prop_path = f'{data_chats_dir}\\{str(chat_id)}'
+        result = proceed_message_chat(event, prop_path=prop_path)
+
+        conv_id = event.message['conversation_message_id']
+        refresh_properties(path=prop_path, last_id=conv_id)
     except Exception as e:
         result = str(e)
         logger.exception(result)
         vkapi.send_message_chat(event.chat_id, result, '')
     else:
-        if result is not None:
+        if result is not None and result != '':
             vkapi.send_message_chat(event.chat_id, result, '')
-    finally:
-        chat_id = event.chat_id
-        prop_path = f'{data_chats_dir}\\{str(chat_id)}'
-        conv_id = event.message['conversation_message_id']
-        refresh_properties(path=prop_path, last_id=conv_id)
 
 
-def proceed_message_chat(event) -> str:
+def proceed_message_chat(event, prop_path) -> str:
     chat_id = event.chat_id
     message = event.message['text']
 
@@ -99,7 +104,24 @@ def proceed_message_chat(event) -> str:
 
     analyze_new_message(message, event=event)
     # conversation_message_id = message_obj['conversation_message_id']
-    replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+    properties = load_properties(prop_path)
+    mes_remain = properties.setdefault('mes_remain', 0)
+    average_mes_day = properties['average_mes']
+    if mes_remain > 0:
+        mes_remain -= 1
+        replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+        if mes_remain == 0:
+            mes_remain = -round(random.normalvariate(average_mes_day * 0.6, 3))
+    elif mes_remain < 0:
+        mes_remain += 1
+        if mes_remain == 0:
+            mes_remain = round(random.normalvariate(average_mes_day * 0.8, 3))
+        replica = ''
+    else:
+        mes_remain = round(random.normalvariate(average_mes_day * 0.8, 3))
+        replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+    properties['mes_remain'] = mes_remain
+    save_properties(properties, prop_path)
     return replica
 
 
