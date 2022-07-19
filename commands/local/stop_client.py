@@ -1,13 +1,12 @@
-import command_system
-from client import list_clients
+from commands import local_command_system
+import client
 
 
 def stop_client(input_, **kwargs):
-    for c in list_clients:
-        c.stop()
+    client.stop()
 
 
-stop_client_command = command_system.Command()
+stop_client_command = local_command_system.Command()
 
 stop_client_command.keys = ['stop_client', 'spc']
 stop_client_command.description = 'stop client which requesting data'

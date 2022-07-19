@@ -1,30 +1,11 @@
-import os, json
+import os
 
 from tabulate import tabulate
 from operator import itemgetter
-from settings import data_dir
 
 
 def main():
     pass
-
-
-def get_words(filename):
-    try:
-        text_raw = None
-        with open(filename, 'r', encoding='utf-8') as f:
-            text_raw = f.read()
-        text = list()
-        for row in text_raw.split('\n'):
-            for word in row.split(' '):
-                word = word.lower().strip(service_chars)
-                if len(word) > 0:
-                    text.append(word)
-        return text
-    except UnicodeDecodeError as e:
-        print('wrong encoding. please turn file into "utf-8": {}'.format(e))
-    except Exception as e:
-        print(e)
 
 
 def show_list(list_, num_row=1, reversed=True):
@@ -58,46 +39,13 @@ def fill_args(input_):
 
 
 def check_path(path: str):
-    dirs = path.split('\\')
-    for n, d in enumerate(dirs):
-        cur_path = '\\'.join(dirs[0:n + 1])
-        if not os.path.exists(cur_path):
-            os.mkdir(cur_path)
-
-
-def save_dict(filename, dictionary):
-    check_path(data_dir)
-    filename = '{}\\{}.json'.format(data_dir, filename)
-    if not os.path.exists(filename):
-        with open(filename, 'w') as f:
-            json.dump({}, f)
-    with open(filename) as f:
-        last_values: dict = json.load(f)
-    with open(filename, 'w') as f:
-        try:
-            merge_dicts(last_values, dictionary)
-            json.dump(last_values, f)
-            print('{} successfully saved'.format(filename))
-        except Exception() as e:
-            print(e)
-    return last_values
-
-
-def merge_dicts(base_dict: dict, second_dict: dict):
-    for k in second_dict:
-        first_item = base_dict.setdefault(k, 0)
-        second_item = second_dict[k]
-        type1 = type(first_item).__name__
-        type2 = type(second_item).__name__
-        if type1 == 'dict' and type2 == 'dict':
-            base_dict[k] = merge_dicts(first_item, second_item)
-        elif type1 != type2:
-            base_dict[k] = first_item if type1 == 'dict' else second_item
-        elif type1 == 'int' and type2 == 'int':
-            base_dict[k] = base_dict.setdefault(k, 0) + second_dict[k]
-        else:
-            raise Exception('different types in dicts')
-    return base_dict
+    if not os.path.exists(path):
+        os.makedirs(path)
+    # dirs = path.split('\\')
+    # for n, d in enumerate(dirs):
+    #     cur_path = '\\'.join(dirs[0:n + 1])
+    #     if not os.path.exists(cur_path):
+    #         os.mkdir(cur_path)
 
 
 service_chars = ''

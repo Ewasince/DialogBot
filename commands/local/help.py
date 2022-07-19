@@ -1,12 +1,11 @@
-import command_system
-import os
+from commands import local_command_system
 from tabulate import tabulate
 
 
 def help(input_):
-    c: command_system.Command
+    c: local_command_system.Command
     message = []
-    for c in command_system.command_list:
+    for c in local_command_system.command_list:
         message_line = list()
         keys = c.keys  # TODO: можно ли убрать это
         message_line.append(keys.pop(0))
@@ -28,7 +27,7 @@ def help(input_):
     print(tabulate(message))
 
 
-help_command = command_system.Command()
+help_command = local_command_system.Command()
 
 help_command.keys = ['help', 'h']
 help_command.description = 'this command'

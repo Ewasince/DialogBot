@@ -1,7 +1,4 @@
-from generator import generator
-import command_system
-from tools import alphabet
-from tabulate import tabulate
+from commands import local_command_system
 from generator.generator import refresh_dicts
 
 
@@ -13,7 +10,7 @@ def show_pos_letters(input_, **kwargs):
     pass
 
 
-show_pos_letters_command = command_system.Command()
+show_pos_letters_command = local_command_system.Command()
 
 show_pos_letters_command.keys = ['show_pos_letters', 'spl']
 show_pos_letters_command.description = 'show number of letters occurrences by word length'

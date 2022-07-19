@@ -1,72 +1,92 @@
-import requests
-import json
-from settings import confirmation_token, token, access_token
 import threading
-import time
-from vkapi import send_message
-from generator.generator import generate_word_2
+
+import vkapi
+from vkapi import send_message_chat, longpoll
+from vk_api.bot_longpoll import VkBotEventType
+from commands.bot_command_system.bot_command_system import command_list as command_list
+from commands.bot_command_system.bot_command_system import process_command
+from commands.bot_command_system.analyze.analyze import analyze_new_message, analyze_chat
+from commands.bot_command_system.generate.replica.replica import new_replica
+from settings import bot_name
 
 list_clients = []
+lock_obj = threading.Lock()
+is_continue = True
 
 
-class Client:
-    def main(self):
-        pass
+def start():
+    thread = threading.Thread(target=loop_connect)
+    thread.start()
 
-    def __init__(self, url):
-        self.url = url
-        self.data = []
-        self.lock_obj = threading.Lock()
-        self.is_continue = True
-        list_clients.append(self)
-        pass
 
-    def start(self):
-        thread = threading.Thread(target=self.loop_connect)
-        thread.start()
+def loop_connect():
+    for event in longpoll.listen():
+        process_event(event)
+        if not is_continue:
+            break
+    print('client stopped')
 
-    def stop(self):
-        self.is_continue = False
 
-    def loop_connect(self):
-        time.sleep(2)
-        while self.is_continue:
-            self.check_messages()
-            time.sleep(1)
-        print('client stopped')
+def stop():
+    global is_continue
+    is_continue = False
 
-    def check_messages(self):
-        self.request_data()
-        self.process_data()
-        pass
 
-    def request_data(self):
-        request_data = {'type': 'request', 'confirmation_token': confirmation_token}
-        json_str = json.dumps(request_data)
-        response = requests.post(self.url, json_str)
-        print('{}: {}'.format(self.url, response.status_code))
-        data_dict: dict = json.loads(response.text)
-        self.lock_obj.acquire()
-        self.data.extend(data_dict.values())
-        self.lock_obj.release()
-        return data_dict
+def process_event(event):
+    lock_obj.acquire()
+    try:
+        if event.type == VkBotEventType.MESSAGE_NEW:
+            if event.from_chat:
+                process_from_chat(event)
+            elif event.from_user:
+                process_from_ls(event)
+    finally:
+        lock_obj.release()
 
-    def process_data(self):
-        self.lock_obj.acquire()
 
-        while len(self.data) > 0:
-            data: dict = self.data.pop(0)
-            if data['type'] == 'message_new':
-                text = data['object']['message']['text']
-                user_id = data['object']['message']['from_id']
-                message = generate_word_2(**{'key_m': True})
-                try:
-                    send_message(str(user_id), message)
-                    print('message has been sent')
-                except Exception as e:
-                    print(e)
-            else:
-                pass
-        self.lock_obj.release()
+def process_from_chat(event):
+    chat_id = event.chat_id
+    message = event.message['text']
 
-    pass
+    result = process_command(message, command_list, chat_id=chat_id, event=event)
+    if result is not None:
+        vkapi.send_message_chat(chat_id, result)
+        return
+
+    action = event.message.setdefault('action', None)
+    if action is not None:
+        action_type = event.message.action.setdefault('type', '')
+        member_id = event.message.action.setdefault('member_id', 0)
+    else:
+        action_type = ''
+        member_id = 0
+
+    if action_type == 'chat_invite_user':
+        if member_id == -214483095:
+            vkapi.send_message_chat(chat_id,
+                                    f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
+                                    f'переписке. Доступные команды можно узнать набрав \'help\'')
+            analyze_chat(message, chat_id=chat_id, event=event)
+            pass
+        else:
+            vkapi.send_message_chat(chat_id, f'опа, @id{member_id} вылез')
+        return
+    elif action_type == 'chat_kick_user':
+        vkapi.send_message_chat(chat_id, f'потеряли молодого')
+        return
+
+    analyze_new_message(message, event=event)
+    # conversation_message_id = message_obj['conversation_message_id']
+    replica = new_replica(message, chat_id=chat_id, event=event)
+    vkapi.send_message_chat(chat_id, replica)
+
+
+
+
+
+
+
+def process_from_ls(event):
+    user_id = event.message['from_id']
+    vkapi.send_message(user_id,
+                       'Мне разработчик пока не разрешает отвечать в личных сообщениях :(')

@@ -8,7 +8,7 @@ from tools import check_path
 
 def main():
     parser = Parser_ilibrary_ru(url='https://ilibrary.ru/author/chekhov/form.8/l.all/index.html',
-                                path='libraries\\chekhov\\')
+                                path='libraries/user/chekhov\\')
     parser.start()
 
 
