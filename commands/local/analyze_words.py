@@ -1,8 +1,9 @@
 import os
 
+import filemanager
 from commands import local_command_system
 from tools import show_list
-from generator.analyzer import get_words_file
+from filemanager import get_words_file
 from settings import test_filename
 import generator.analyzer as a
 
@@ -26,7 +27,7 @@ def analyze_words(input_, **kwargs):
         text = get_words_file(pathname)
         analyzer.analyze_words_len(pathname)
 
-    all_values = a.save_dict('words_len', analyzer.words_len, fjson=True)
+    all_values = filemanager.save_dict('words_len', analyzer.words_len, fjson=True)
     # all_values = save_dict('words_len', analyzer.words_len)
 
     show_list(all_values, num_row=0, reversed=False)

@@ -1,4 +1,5 @@
 import threading
+import logging
 
 import vkapi
 from vkapi import send_message_chat, longpoll
@@ -7,11 +8,13 @@ from commands.bot_command_system.bot_command_system import command_list as comma
 from commands.bot_command_system.bot_command_system import process_command
 from commands.bot_command_system.analyze.analyze import analyze_new_message, analyze_chat
 from commands.bot_command_system.generate.replica.replica import new_replica
-from settings import bot_name
+from settings import bot_name, data_chats_dir
+from filemanager import load_properties, save_properties, refresh_properties
 
 list_clients = []
 lock_obj = threading.Lock()
 is_continue = True
+logger = logging.getLogger(__name__)
 
 
 def start():
@@ -37,21 +40,42 @@ def process_event(event):
     try:
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
-                process_from_chat(event)
+                proceed_from_chat(event)
             elif event.from_user:
-                process_from_ls(event)
+                proceed_from_ls(event)
+
     finally:
         lock_obj.release()
 
 
-def process_from_chat(event):
+def proceed_from_chat(event) -> str:
+    try:
+        result = proceed_message_chat(event)
+    except Exception as e:
+        result = str(e)
+        logger.exception(result)
+        vkapi.send_message_chat(event.chat_id, result, '')
+    else:
+        if result is not None:
+            vkapi.send_message_chat(event.chat_id, result, '')
+    finally:
+        chat_id = event.chat_id
+        prop_path = f'{data_chats_dir}\\{str(chat_id)}'
+        conv_id = event.message['conversation_message_id']
+        refresh_properties(path=prop_path, last_id=conv_id)
+
+
+def proceed_message_chat(event) -> str:
     chat_id = event.chat_id
     message = event.message['text']
 
-    result = process_command(message, command_list, chat_id=chat_id, event=event)
-    if result is not None:
-        vkapi.send_message_chat(chat_id, result)
-        return
+    try:
+        result = process_command(message.strip(), command_list, chat_id=chat_id, event=event)
+        if result is not None:
+            return result
+    except Exception as e:
+        logger.exception('')
+        return str(e)
 
     action = event.message.setdefault('action', None)
     if action is not None:
@@ -63,30 +87,33 @@ def process_from_chat(event):
 
     if action_type == 'chat_invite_user':
         if member_id == -214483095:
-            vkapi.send_message_chat(chat_id,
-                                    f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
-                                    f'переписке. Доступные команды можно узнать набрав \'help\'')
+            result = f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
+            f'переписке. Доступные команды можно узнать набрав \'help\''
             analyze_chat(message, chat_id=chat_id, event=event)
-            pass
         else:
-            vkapi.send_message_chat(chat_id, f'опа, @id{member_id} вылез')
-        return
+            result = f'опа, @id{member_id} вылез'
+        return result
     elif action_type == 'chat_kick_user':
-        vkapi.send_message_chat(chat_id, f'потеряли молодого')
-        return
+        result = f'потеряли молодого'
+        return result
 
     analyze_new_message(message, event=event)
     # conversation_message_id = message_obj['conversation_message_id']
-    replica = new_replica(message, chat_id=chat_id, event=event)
-    vkapi.send_message_chat(chat_id, replica)
+    replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+    return replica
 
 
+def proceed_from_ls(event):
+    try:
+        result = proceed_message_ls(event)
+    except Exception as e:
+        result = str(e)
+        logger.exception(result)
+        vkapi.send_message(event.message['from_id'], result, '')
+    else:
+        if result is not None:
+            vkapi.send_message(event.message['from_id'], result, '')
 
 
-
-
-
-def process_from_ls(event):
-    user_id = event.message['from_id']
-    vkapi.send_message(user_id,
-                       'Мне разработчик пока не разрешает отвечать в личных сообщениях :(')
+def proceed_message_ls(event) -> str:
+    return 'Мне разработчик пока не разрешает отвечать в личных сообщениях :('

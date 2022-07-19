@@ -8,7 +8,8 @@ from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.bot_command_system import command_list as parent_cl
 from vkapi import get_by_conversation_id
 from settings import group_id, data_chats_dir
-from generator.analyzer import Analyzer, get_words
+from generator.analyzer import Analyzer, Date_analyzer
+from filemanager import get_words, save_data, load_properties, save_class_properties
 from tools import check_path
 from commands.bot_command_system.help.help import keys as help_keys
 
@@ -19,7 +20,7 @@ def analyze_chat(input_, **kwargs):
     event = kwargs['event']
     if event is None:
         return 'event is empty'
-    chat_id = kwargs['chat_id']
+    chat_id = event.chat_id
     conv_message_id = event.message.conversation_message_id
 
     path = f'{data_chats_dir}\\{str(chat_id)}'
@@ -35,38 +36,30 @@ def analyze_chat(input_, **kwargs):
     ids_to_load = range(last_conv_id, conv_message_id + 1, 100)
 
     new_messages = list()
-    analyzer = Analyzer()
+    properties = kwargs.setdefault('properties', None)
+    if not properties:
+        properties = load_properties(path)
+    date_analyzer = Date_analyzer(properties)
+    analyzer = Analyzer(date_analyzer)
     for n in ids_to_load:
         ids = [str(n) for n in range(n, n + 100)]
         response = get_by_conversation_id(chat_id, ','.join(ids))
         for message_obj in response['items']:
-            # # message = response.items[i]
-            # from_id = message_obj['from_id']
-            # if from_id == -int(group_id):
-            #     continue
-            # text = message_obj['text']
-            # if text == '':
-            #     continue
-            # if is_command(text, parent_cl):
-            #     continue
-
             from_id = message_obj['from_id']
             text = message_obj['text']
-            if not analyze_message(from_id, text, analyzer):
+            date = message_obj['date']
+            if not analyze_message(analyzer, from_id, text, date):
                 continue
             conversation_message_id = message_obj['conversation_message_id']
             attachments = message_obj['attachments']
-            new_messages.append(Message(conversation_message_id, text, attachments, from_id))
+            date = message_obj['date']
+            new_messages.append(Message(conversation_message_id, text, attachments, from_id, date))
     if len(new_messages) == 0:
         return 'нечего анализировать'
     messages_loaded.extend(new_messages)
 
-    # for mes in new_messages:
-    #     words = get_words(mes.text)
-    #     analyzer.analyze(words)
-
-    analyzer.save_dicts(path=path, fjson=False)
-
+    save_data(analyzer, path=path, fjson=False)
+    save_class_properties(analyzer.date_analyzer, path=path)
     with open(filename, 'wb') as f:
         pickle.dump(messages_loaded, f)
     return random.choice(replies)
@@ -74,15 +67,25 @@ def analyze_chat(input_, **kwargs):
 
 def analyze_new_message(_input, **kwargs):
     event = kwargs['event']
-    analyzer = Analyzer()
     message_obj = event.message
     from_id = message_obj['from_id']
     text = message_obj['text']
-    if not analyze_message(from_id, text, analyzer):
-        return
+    date = message_obj['date']
+
     chat_id = event.chat_id
     path = f'{data_chats_dir}\\{str(chat_id)}'
-    analyzer.save_dicts(path=path, fjson=False)
+    properties = load_properties(path)
+    if len(properties) == 0 or message_obj['conversation_message_id'] - properties['last_id'] > 2:
+        kwargs['properties'] = properties
+        analyze_chat(_input, **kwargs)
+        return
+
+    date_analyzer = Date_analyzer(properties)
+    analyzer = Analyzer(date_analyzer)
+    if not analyze_message(analyzer, from_id, text, date):
+        return
+    save_data(analyzer, path=path, fjson=False)
+    save_class_properties(analyzer.date_analyzer, path=path)
 
     filename = f'{path}\\messages'
     if os.path.exists(filename):
@@ -99,7 +102,7 @@ def analyze_new_message(_input, **kwargs):
     pass
 
 
-def analyze_message(from_id, text, analyzer: Analyzer):
+def analyze_message(analyzer: Analyzer, from_id, text, date):
     if from_id == -int(group_id):
         return False
     if text == '':
@@ -107,18 +110,18 @@ def analyze_message(from_id, text, analyzer: Analyzer):
     if is_command(text, parent_cl):
         return False
     words = get_words(text)
-    analyzer.analyze(words) # TODO: где-то тут сделать анализ времени отправки сообщения чтобы в будущем потом
-    # TODO: определить среднее количество отсылаемых сообщений в день и на основе этого определить на сколько сообщений
-    #  # TODO: бот будет периодически замолка ть и появляться
+    analyzer.analyze(words)
+    analyzer.date_analyzer.analyze_date(date)  # TODO: проверить как работает среднее значение
     return True
 
 
 class Message:
-    def __init__(self, conversation_message_id, text, attachments, from_id):
+    def __init__(self, conversation_message_id, text, attachments, from_id, date):
         self.conv_id = conversation_message_id
         self.text = text
         self.attachments = attachments
         self.from_id = from_id
+        self.date = date
 
 
 def is_command(text, commands):

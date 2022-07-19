@@ -13,8 +13,7 @@ import commands.bot_command_system.analyze.analyze as analyze
 command_list = []
 
 
-def new_replica(input_, **kwargs):
-    chat_id = kwargs.setdefault('chat_id', None)
+def new_replica(input_, chat_id=None, **kwargs):
     if not chat_id:
         return 'no chat id'
     path = f'{data_chats_dir}\\{str(chat_id)}'
@@ -27,6 +26,18 @@ def new_replica(input_, **kwargs):
     message = generator.generate_replica()
 
     return message
+
+
+def auto_generate(input_, chat_id, **kwargs):
+    if not chat_id:
+        raise Exception('no chat id')
+    path = f'{data_chats_dir}\\{str(chat_id)}'
+    filename = f'{path}\\properties'
+    if not os.path.exists(filename):
+        raise Exception(f'no data properties in {chat_id}')
+    with open(filename, 'rb') as f:
+        properties = pickle.load(f)
+    replica = new_replica(input_, chat_id=chat_id, **kwargs)
 
 
 rel_module_path = os.path.relpath(os.path.dirname(__file__))
