@@ -9,7 +9,7 @@ command_list = []
 
 
 def generate_word(input_, **kwargs):
-    result = process_command(input_, command_list)
+    result = process_command(input_, command_list, **kwargs)
     # if result is None:
     #     for c in command_list:
     #         if 'second' in c.keys:

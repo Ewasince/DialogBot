@@ -3,6 +3,7 @@ import os.path
 import random
 from settings import data_dir
 from tools import check_path
+from commands.bot_command_system.analyze.analyze import Message
 
 tables = dict()
 tables_time = {'syll_freq': 0, 'letters_pos': 0, 'letters_pos_by_word': 0, 'words_len': 0}
@@ -139,3 +140,69 @@ def refresh_dicts():
             with open(filename) as f:
                 tables[name] = json.load(f)
             tables_time[name] = last_time_modified
+
+
+class Chat_generator:
+    def __init__(self, messages):
+        self.messages = messages
+
+    def generate_replica(self) -> str:
+        num_parts = self.get_num_parts()
+        num_parts = round(num_parts)
+        parts = random.choices(self.messages, k=num_parts)
+        message = ''
+        p: Message
+        for p in parts:
+            message += self.get_rnd_part(p.text)
+            message += ' '
+        message = message.strip()
+        return message
+
+    @staticmethod
+    def get_num_parts():
+        num_parts = random.lognormvariate(0.4, 0.4)
+        return num_parts
+
+    @staticmethod
+    def get_rnd_part(text: str):
+        text_len = len(text)
+        pos1 = random.randint(0, text_len)
+        pos2 = random.randint(0, text_len)
+        if pos1 > pos2:
+            p = pos1
+            pos1 = pos2
+            pos2 = p
+        find_func = lambda s, p1, p2: s.find(' ', p1, p2)
+        rfind_func = lambda s, p1, p2: s.rfind(' ', p1, p2)
+        if bool(random.getrandbits(1)):
+            find_func_ = find_func
+            find_func = rfind_func
+            rfind_func = find_func_
+        pos1_ = find_func(text, pos1, text_len)
+        pos2_ = find_func(text, pos2, text_len)
+        if pos1_ == -1:
+            pos1_ = rfind_func(text, 0, pos1)
+        if pos2_ == -1:
+            pos2_ = rfind_func(text, 0, pos2)
+        pos1 = 0 if pos1_ == -1 else pos1_
+        pos2 = text_len if pos2_ == -1 else pos2_
+        if pos1 == pos2:
+            if bool(random.getrandbits(1)):
+                pos1 = 0
+            else:
+                pos2 = text_len
+
+        return text[pos1:pos2]
+        # mu = text_len / 2
+        # sigma = text_len / 6
+        # sep_pos = random.normalvariate(mu, sigma)
+        # sep_pos = round(sep_pos)
+        # if sep_pos < 0:
+        #     sep_pos = 0
+        # elif sep_pos > text_len:
+        #     sep_pos = text_len
+        # part = text[:sep_pos]
+        # sep_pos_ = part.rfind(' ')
+        # if sep_pos_ != -1:
+        #     sep_pos += sep_pos_
+        # return text[:sep_pos]
