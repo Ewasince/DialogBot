@@ -1,9 +1,9 @@
 from commands import local_command_system
-from generator.generator import refresh_dicts
+from generator.generator import local_generator
 
 
 def show_pos_letters(input_, **kwargs):
-    if refresh_dicts():
+    if local_generator.refresh_dicts():
         print('no data')
         return
     print('this option not filled yet')

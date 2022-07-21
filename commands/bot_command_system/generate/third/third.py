@@ -2,14 +2,17 @@ import os
 
 from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.generate.generate import command_list as parent_cl
-import generator.generator as g
+
+from generator.generator import Generator
+from filemanager import get_chat_path
 
 command_list = []
 
 
 def third_alg(input_, **kwargs):
-    g.refresh_dicts()
-    result = g.generate_word_3()
+    path = get_chat_path(kwargs['event'])
+    gen = Generator(path)
+    result = gen.generate_word_3()
     return result
 
 

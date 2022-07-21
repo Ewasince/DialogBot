@@ -15,12 +15,10 @@ def main():
     load_modules()
     client.start()
     start_console()
-    # start_console_alt()
 
 
 def start_console():
     print('type \'help\' for more information')
-    # command = ''
     while is_continue:
         input_ = [n.strip() for n in input('> ').split(' ')]
         command = input_.pop(0)
@@ -46,6 +44,7 @@ def start_console():
 
 def stop_console():
     global is_continue
+    pass
     is_continue = False
 
 

@@ -8,7 +8,7 @@ from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.bot_command_system import command_list as parent_cl
 from vkapi import get_by_conversation_id
 from settings import group_id, data_chats_dir
-from generator.analyzer import Analyzer, Date_analyzer
+from generator.analyzer import Analyzer, DateAnalyzer
 from filemanager import get_words, save_data, load_properties, save_class_properties
 from tools import check_path
 from commands.bot_command_system.help.help import keys as help_keys
@@ -39,7 +39,7 @@ def analyze_chat(input_, **kwargs):
     properties = kwargs.setdefault('properties', None)
     if not properties:
         properties = load_properties(path)
-    date_analyzer = Date_analyzer(properties)
+    date_analyzer = DateAnalyzer(properties)
     analyzer = Analyzer(date_analyzer)
     for n in ids_to_load:
         ids = [str(n) for n in range(n, n + 100)]
@@ -80,7 +80,7 @@ def analyze_new_message(_input, **kwargs):
         analyze_chat(_input, **kwargs)
         return
 
-    date_analyzer = Date_analyzer(properties)
+    date_analyzer = DateAnalyzer(properties)
     analyzer = Analyzer(date_analyzer)
     if not analyze_message(analyzer, from_id, text, date):
         return

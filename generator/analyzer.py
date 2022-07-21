@@ -62,7 +62,7 @@ class Analyzer:
         # print('{} finished'.format(filename))
 
 
-class Date_analyzer:
+class DateAnalyzer:
     def __init__(self, properties: dict):
         self.average_mes = properties.setdefault('average_mes', 0)
         self.amount_mes = properties.setdefault('amount_mes', 0)

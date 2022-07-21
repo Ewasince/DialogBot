@@ -22,10 +22,10 @@ def analyze_words(input_, **kwargs):
         for fname in list_files:
             filename = '{}\\{}'.format(pathname, fname)
             text = get_words_file(filename)
-            analyzer.analyze_words_len(filename)
+            analyzer.analyze_words_len(text)
     else:
         text = get_words_file(pathname)
-        analyzer.analyze_words_len(pathname)
+        analyzer.analyze_words_len(text)
 
     all_values = filemanager.save_dict('words_len', analyzer.words_len, fjson=True)
     # all_values = save_dict('words_len', analyzer.words_len)

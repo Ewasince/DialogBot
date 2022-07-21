@@ -8,13 +8,13 @@ def generate(input_, **kwargs):
         count = int(input_[0])
 
     if kwargs.setdefault('key_1', False):
-        generate_func = generate_word_1
+        generate_func = local_generator.generate_word_1
     elif kwargs.setdefault('key_2', False):
-        generate_func = generate_word_2
+        generate_func = local_generator.generate_word_2
     elif kwargs.setdefault('key_3', False):
-        generate_func = generate_word_3
+        generate_func = local_generator.generate_word_3
     else:
-        generate_func = generate_word_3
+        generate_func = local_generator.generate_word_3
 
     for i in range(count):
         word = generate_func(**kwargs)

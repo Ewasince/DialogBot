@@ -2,11 +2,11 @@ from generator import generator
 from commands import local_command_system
 from tools import alphabet
 from tabulate import tabulate
-from generator.generator import refresh_dicts
+from generator.generator import local_generator
 
 
 def show_syllables(input_, **kwargs):
-    if refresh_dicts():
+    if local_generator.refresh_dicts():
         print('no data')
         return
     amounts = list()

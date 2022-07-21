@@ -35,3 +35,5 @@ local_commands_dir = 'commands\\local'
 bot_commands_dir = 'commands\\bot_command_system'
 bot_name = settings['bot_name']
 data_chats_dir = 'data\\chats'
+console = True
+bot_console = True

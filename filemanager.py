@@ -2,12 +2,12 @@ import json
 import os
 import pickle
 
-from settings import data_dir
+from settings import data_dir, data_chats_dir
 from tools import check_path, service_chars
-from generator.analyzer import Analyzer, Date_analyzer
+from generator.analyzer import Analyzer, DateAnalyzer
 
 
-def save_class_properties(date_analyzer: Date_analyzer, path=data_dir):
+def save_class_properties(date_analyzer: DateAnalyzer, path=data_dir):
     filename = f'{path}\\properties'
     if os.path.exists(filename):
         with open(filename, 'rb') as f:
@@ -130,3 +130,9 @@ def save_data(analyzer: Analyzer, path=data_dir, fjson=False) -> list:
 def analyze_file(analyzer, filename):
     text = get_words_file(filename)
     analyzer.analyze(text)
+
+
+def get_chat_path(event) -> str:
+    chat_id = event['chat_id']
+    path = f'{data_chats_dir}\\{chat_id}'
+    return path

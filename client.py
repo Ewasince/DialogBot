@@ -2,6 +2,8 @@ import random
 import threading
 import logging
 
+import requests
+
 import vkapi
 from vkapi import send_message_chat, longpoll
 from vk_api.bot_longpoll import VkBotEventType
@@ -30,6 +32,8 @@ def loop_connect():
                 process_event(event)
                 if not is_continue:
                     break
+        except requests.exceptions.ReadTimeout:
+            pass
         except Exception as e:
             logger.exception(str(e))
     print('client stopped')
