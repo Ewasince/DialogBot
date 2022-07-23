@@ -11,6 +11,9 @@ class Analyzer:
         self.dicts['words_len'] = self.words_len
         self.date_analyzer = date_analyzer
 
+        self.tsyll_freq = {}
+        self.dicts['tsyll_freq'] = self.tsyll_freq
+
     def analyze(self, text):
         for word in text:
             n = 0
@@ -60,6 +63,32 @@ class Analyzer:
         #     len_dict[length] = len_dict[length] / amount_words
         # show_list(len_dict, num_row=0, reversed=False)
         # print('{} finished'.format(filename))
+
+    def analyze_modified(self, text):
+        for word in text:
+            n = 0
+            while n <= len(word):
+                letter = word[n] if n < len(word) else ' '
+
+                self.analyze_triple_syllables(n, word)
+
+                n += 1
+
+        # self.analyze_words_len(text)
+
+    def analyze_triple_syllables(self, n, word):
+        if n == 0:
+            syll = '  ' + word[n]
+            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+        elif n == 1:
+            syll = ' ' + word[n - 1] + word[n]
+            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+        elif n == len(word):
+            syll = word[n - 2] + word[n - 1] + ' '
+            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+        else:
+            syll = word[n - 2] + word[n - 1] + word[n]
+            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
 
 
 class DateAnalyzer:

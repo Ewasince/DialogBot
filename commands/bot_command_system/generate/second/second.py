@@ -10,6 +10,8 @@ command_list = []
 
 
 def second_alg(input_, **kwargs):
+    if input_ != '':
+        return None
     path = get_chat_path(kwargs['event'])
     gen = Generator(path)
     result = gen.generate_word_2()

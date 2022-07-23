@@ -45,6 +45,8 @@ def desc_branches(commands, input_):
                 if len(c.own_store) > 0 and len(input_):
                     return desc_branches(c.own_store, input_)
                 else:
+                    if input_ != '':
+                        return None
                     keys_str = [f'\'{k}\'' for k in c.keys]
                     result = ', '.join(keys_str)
                     result = f'{result} - {c.description}'

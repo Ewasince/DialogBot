@@ -17,6 +17,8 @@ command_list = []
 
 
 def analyze_chat(input_, **kwargs):
+    if input_ != '':
+        return None
     event = kwargs['event']
     if event is None:
         return 'event is empty'

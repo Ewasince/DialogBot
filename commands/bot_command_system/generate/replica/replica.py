@@ -14,12 +14,14 @@ command_list = []
 
 
 def new_replica(input_, chat_id=None, **kwargs):
+    if input_ != '':
+        return None
     if not chat_id:
         return 'no chat id'
     path = f'{data_chats_dir}\\{str(chat_id)}'
     filename = f'{path}\\messages'
     if not os.path.exists(filename):
-        analyze.analyze_chat(input_, **kwargs)
+        analyze.analyze_chat('', **kwargs)
     with open(filename, 'rb') as f:
         messages = pickle.load(f)
     generator = ChatGenerator(messages)
