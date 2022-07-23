@@ -1,12 +1,14 @@
 from commands import local_command_system
 from commands.bot_command_system.bot_command_system import command_list
+import settings
 
 quit_command = ['quit', 'q']
 
 
 def bot_console(input_, **kwargs):
+    settings.bot_console = True
     commands = command_list
-    while True:
+    while settings.bot_console:
         raw_import = input('bot> ')
         input_ = raw_import.strip()
         input_list = input_.split(' ')

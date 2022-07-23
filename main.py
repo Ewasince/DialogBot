@@ -1,4 +1,5 @@
 import os
+import settings
 
 from tools import fill_args
 from commands.local_command_system import command_list
@@ -19,7 +20,7 @@ def main():
 
 def start_console():
     print('type \'help\' for more information')
-    while is_continue:
+    while settings.console:
         input_ = [n.strip() for n in input('> ').split(' ')]
         command = input_.pop(0)
 
@@ -43,9 +44,8 @@ def start_console():
 
 
 def stop_console():
-    global is_continue
-    pass
-    is_continue = False
+    settings.client = False
+    settings.console = False
 
 
 def load_modules():

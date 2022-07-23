@@ -17,7 +17,7 @@ class Generator:
         self.refresh_dicts()
 
     def generate_word_1(self, **kwargs):
-        if self.refresh_dicts():
+        if self.refresh_dicts('syll_freq'):
             return 'no data'
         syll_freq = self.tables['syll_freq']
         word = ''
@@ -43,7 +43,7 @@ class Generator:
         pass
 
     def generate_word_2(self, **kwargs):
-        if self.refresh_dicts():
+        if self.refresh_dicts('syll_freq', 'letters_pos'):
             return 'no data'
         syll_freq = self.tables['syll_freq']
         letters_pos = self.tables['letters_pos']
@@ -83,7 +83,7 @@ class Generator:
         return word[:-1]
 
     def generate_word_3(self, **kwargs):
-        if self.refresh_dicts():
+        if self.refresh_dicts('syll_freq', 'words_len', 'letters_pos_by_word'):
             return 'no data'
 
         words_len = self.tables['words_len']
@@ -120,22 +120,26 @@ class Generator:
         return word
 
     def get_suitable_keys(self, word, num) -> list:
-        syll_dict = self.tables['syll_dict']
+        syll_dict = self.tables['syll_freq']
         keys = syll_dict.keys()
         if num == 0:
             return [k for k in keys if k[0] == ' ']
         else:
             return [k for k in keys if k[0] == word[num - 1]]
 
-    def refresh_dicts(self):
+    def refresh_dicts(self, *args):
         check_path(self.path)
         for name in self.tables_time:
+            if len(args) != 0:
+                if name not in args:
+                    continue
+
             filename = '{}\\{}'.format(self.path, name)
             if not os.path.exists(filename):
                 return True
             last_time_modified = os.path.getmtime(filename)
             if self.tables_time[name] < last_time_modified:
-                with open(filename) as f:
+                with open(filename, 'rb') as f:
                     self.tables[name] = pickle.load(f)
                 self.tables_time[name] = last_time_modified
 

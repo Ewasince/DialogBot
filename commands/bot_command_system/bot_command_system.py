@@ -8,7 +8,9 @@ command_list = []
 
 
 class Command:
-    def __init__(self, store: list, module_path, own_store):
+    def __init__(self, store: list, module_path, own_store, local=False):
+        if local:
+            return
         self.__keys = []
         self.description = ''
         self.own_store = own_store
@@ -47,7 +49,7 @@ def load_bot_modules(path):
 def process_command(message, cmd_list, **kwargs):
     input_ = message.strip()
 
-    for c in cmd_list: # TODO: сделать так, чтобы если команда удовлетворяла условиям, но после нее были невалидные кварги, она не срабатывала, путём выдачи None
+    for c in cmd_list:  # TODO: сделать так, чтобы если команда удовлетворяла условиям, но после нее были невалидные кварги, она не срабатывала, путём выдачи None
         # TODO: скорее всего нужно будет в вызов команды добавить кварг о несрабатывании нее, чтобы можно было ипользовать встроенную функцию выполнения комманд
         for key in c.keys:
             if input_.find(key) == 0:

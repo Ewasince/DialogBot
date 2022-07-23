@@ -37,3 +37,4 @@ bot_name = settings['bot_name']
 data_chats_dir = 'data\\chats'
 console = True
 bot_console = True
+client = True

@@ -9,6 +9,6 @@ def stop_client(input_, **kwargs):
 stop_client_command = local_command_system.Command()
 
 stop_client_command.keys = ['stop_client', 'spc']
-stop_client_command.description = 'stop client which requesting data'
+stop_client_command.description = 'stop client that requesting data'
 stop_client_command.process = stop_client
 stop_client_command.kwargs = {}

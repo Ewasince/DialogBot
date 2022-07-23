@@ -1,8 +1,8 @@
 import random
 import threading
 import logging
-
 import requests
+import settings
 
 import vkapi
 from vkapi import send_message_chat, longpoll
@@ -11,26 +11,28 @@ from commands.bot_command_system.bot_command_system import command_list as comma
 from commands.bot_command_system.bot_command_system import process_command
 from commands.bot_command_system.analyze.analyze import analyze_new_message, analyze_chat
 from commands.bot_command_system.generate.replica.replica import new_replica
-from settings import bot_name, data_chats_dir
+from settings import bot_name, data_chats_dir, console, bot_console, client
 from filemanager import load_properties, save_properties, refresh_properties
 
 list_clients = []
 lock_obj = threading.Lock()
-is_continue = True
 logger = logging.getLogger(__name__)
+client_thread = None
 
 
 def start():
-    thread = threading.Thread(target=loop_connect)
-    thread.start()
+    global client_thread
+    client_thread = threading.Thread(target=loop_connect)
+    client_thread.start()
+    settings.client = True
 
 
 def loop_connect():
-    while is_continue:
+    while settings.client:
         try:
             for event in longpoll.listen():
                 process_event(event)
-                if not is_continue:
+                if not settings.client:
                     break
         except requests.exceptions.ReadTimeout:
             pass
@@ -40,8 +42,7 @@ def loop_connect():
 
 
 def stop():
-    global is_continue
-    is_continue = False
+    settings.client = False
 
 
 def process_event(event):

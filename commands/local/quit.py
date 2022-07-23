@@ -1,9 +1,10 @@
 from commands import local_command_system
 import main
+from commands.local.stop_client import stop_client
 
 
 def quit_(input_, **kwargs):
-    # main.is_continue = False
+    stop_client('')
     main.stop_console()
     print('exiting from app')
 

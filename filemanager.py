@@ -133,6 +133,6 @@ def analyze_file(analyzer, filename):
 
 
 def get_chat_path(event) -> str:
-    chat_id = event['chat_id']
+    chat_id = event.chat_id
     path = f'{data_chats_dir}\\{chat_id}'
     return path
