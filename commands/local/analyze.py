@@ -18,13 +18,17 @@ def analyze(input_, **kwargs):
             filename = '{}\\{}'.format(pathname, fname)
             text = get_words_file(filename)
             analyzer.analyze(text)
+            if kwargs.setdefault('key_m', False):
+                analyzer.analyze_modified(text)
             print('{} finished'.format(filename))
     else:
         text = get_words_file(pathname)
         analyzer.analyze(text)
+        if kwargs.setdefault('key_m', False):
+            analyzer.analyze_modified(text)
         print('{} finished'.format(pathname))
 
-    dicts = save_data(analyzer, fjson=True)
+    dicts = save_data(analyzer)
 
     if kwargs.setdefault('key_a', False):
         for d in dicts:
@@ -36,4 +40,4 @@ analyze_command = local_command_system.Command()
 analyze_command.keys = ['analyze', 'a']
 analyze_command.description = 'analyze text for generating new content'
 analyze_command.process = analyze
-analyze_command.kwargs = {'-d': 'analyze file from directory', '-a': 'show all results'}
+analyze_command.kwargs = {'-a': 'show all results', '-m': 'modified analyze'}

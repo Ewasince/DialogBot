@@ -3,6 +3,7 @@ import os
 import pickle
 import random
 import datetime
+import shutil
 
 from commands.bot_command_system import bot_command_system
 from commands.bot_command_system.bot_command_system import command_list as parent_cl
@@ -17,6 +18,9 @@ command_list = []
 
 
 def analyze_chat(input_, **kwargs):
+    if input_ == 'm':
+        kwargs['key_m'] = True
+        input_ = ''
     if input_ != '':
         return None
     event = kwargs['event']
@@ -26,6 +30,8 @@ def analyze_chat(input_, **kwargs):
     conv_message_id = event.message.conversation_message_id
 
     path = f'{data_chats_dir}\\{str(chat_id)}'
+    if kwargs.setdefault('key_m'):
+        shutil.rmtree(path)
     check_path(path)
     filename = f'{path}\\messages'
     if os.path.exists(filename):
@@ -114,6 +120,7 @@ def analyze_message(analyzer: Analyzer, from_id, text, date):
         return False
     words = get_words(text)
     analyzer.analyze(words)
+    analyzer.analyze_modified(words)
     analyzer.date_analyzer.analyze_date(date)  # TODO: проверить как работает среднее значение
     return True
 

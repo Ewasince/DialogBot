@@ -11,7 +11,7 @@ class Generator:
     def __init__(self, path=data_dir):
         self.path = path
         self.tables = dict()
-        self.tables_time = {'syll_freq': 0, 'letters_pos': 0, 'letters_pos_by_word': 0, 'words_len': 0}
+        self.tables_time = {'syll_freq': 0, 'letters_pos': 0, 'letters_pos_by_word': 0, 'words_len': 0, 'tsyll_freq': 0}
         for n in tables_time:
             self.tables[n] = dict()
         self.refresh_dicts()
@@ -51,7 +51,7 @@ class Generator:
         num = 0
         flag = True
         while flag:
-            keys = self.get_suitable_keys(word, num)
+            keys = self.get_suitable_double_keys(word, num)
             values = list()
             weights = list()
             for i in keys:
@@ -95,7 +95,7 @@ class Generator:
 
         word = ''
         for num in range(word_len):
-            keys = self.get_suitable_keys(word, num)
+            keys = self.get_suitable_double_keys(word, num)
             values = list()
             weights = list()
             for i in keys:
@@ -119,7 +119,45 @@ class Generator:
             word += letter[0]
         return word
 
-    def get_suitable_keys(self, word, num) -> list:
+    def generate_word_4(self, **kwargs):
+        if self.refresh_dicts('tsyll_freq', 'words_len', 'letters_pos_by_word'):
+            return 'no data'
+
+        words_len = self.tables['words_len']
+        tsyll_freq = self.tables['tsyll_freq']
+        letters_pos_by_word = self.tables['letters_pos_by_word']
+        values = list(words_len.keys())
+        weights = list(words_len.values())
+        # word_len = int(random.choices(values, weights)[0])
+        word_len = self.gen_word_len(words_len)
+
+        word = ''
+        for num in range(word_len):
+            keys = self.get_suitable_triple_keys(word, num)
+            values = list()
+            weights = list()
+            for i in keys:
+                w1 = tsyll_freq[i]
+                next_letter = i[2]
+                values.append(next_letter)
+                letters_pos = letters_pos_by_word.setdefault(str(word_len), dict())
+                letters_freq = letters_pos.setdefault(str(num), dict())
+                w2 = letters_freq.setdefault(next_letter, 0)
+
+                if kwargs.setdefault('key_m', False):
+                    def calc_weight(x1, x2):
+                        return (x1 ** 2 + x2 ** 2) ** 0.5
+                else:
+                    def calc_weight(x1, x2):
+                        return x1 * x2
+
+                weight = calc_weight(w1, w2)
+                weights.append(weight)
+            letter = random.choices(values, weights=weights)
+            word += letter[0]
+        return word
+
+    def get_suitable_double_keys(self, word, num) -> list:
         syll_dict = self.tables['syll_freq']
         keys = syll_dict.keys()
         if num == 0:
@@ -127,12 +165,27 @@ class Generator:
         else:
             return [k for k in keys if k[0] == word[num - 1]]
 
+    def get_suitable_triple_keys(self, word, num) -> list:
+        tsyll_dict = self.tables['tsyll_freq']
+        keys = tsyll_dict.keys()
+        if num == 0:
+            return [k for k in keys if k[0:2] == '  ']
+        elif num == 1:
+            # ret_mass = []
+            # for i in keys:
+            #     cond1 =
+            return [k for k in keys if k[0] == ' ' and k[1] == word[num - 1]]
+        else:
+            return [k for k in keys if k[0] == word[num - 2] and k[1] == word[num - 1]]
+
     def refresh_dicts(self, *args):
         check_path(self.path)
-        for name in self.tables_time:
-            if len(args) != 0:
-                if name not in args:
-                    continue
+        if args is None:
+            args = self.tables_time.values()
+        for name in args:
+            # if len(args) != 0:
+            #     if name not in args:
+            #         continue
 
             filename = '{}\\{}'.format(self.path, name)
             if not os.path.exists(filename):
@@ -142,6 +195,16 @@ class Generator:
                 with open(filename, 'rb') as f:
                     self.tables[name] = pickle.load(f)
                 self.tables_time[name] = last_time_modified
+
+    def gen_word_len(self, words_len):
+        values = list(words_len.keys())
+        weights = list(words_len.values())
+        word_len = int(random.choices(values, weights)[0])
+        norm_len = random.normalvariate(5, 1)
+        word_len = (word_len + norm_len) / 2
+        word_len = round(word_len)
+
+        return word_len
 
 
 tables = dict()

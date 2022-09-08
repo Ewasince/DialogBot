@@ -20,7 +20,7 @@ class Analyzer:
             while n <= len(word):
                 letter = word[n] if n < len(word) else ' '
 
-                self.analyze_syllables(n, word)
+                self.analyze_double_syllables(n, word)
 
                 self.analyze_letters_pos(n, letter)
 
@@ -30,7 +30,7 @@ class Analyzer:
 
         self.analyze_words_len(text)
 
-    def analyze_syllables(self, n, word):
+    def analyze_double_syllables(self, n, word):
         if n == 0:
             syll = ' ' + word[n]
             self.syll_freq[syll] = self.syll_freq.setdefault(syll, 0) + 1
@@ -68,7 +68,7 @@ class Analyzer:
         for word in text:
             n = 0
             while n <= len(word):
-                letter = word[n] if n < len(word) else ' '
+                # letter = word[n] if n < len(word) else ' '
 
                 self.analyze_triple_syllables(n, word)
 
@@ -80,15 +80,20 @@ class Analyzer:
         if n == 0:
             syll = '  ' + word[n]
             self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
-        elif n == 1:
-            syll = ' ' + word[n - 1] + word[n]
-            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
-        elif n == len(word):
-            syll = word[n - 2] + word[n - 1] + ' '
+        elif len(word) == 1:
+            syll = ' ' + word[n - 1] + ' '
             self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
         else:
-            syll = word[n - 2] + word[n - 1] + word[n]
-            self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+            if n == 1:
+                syll = ' ' + word[n - 1] + word[n]
+                self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+            elif n == len(word):
+                # syll = word[n - 2] + word[n - 1] + ' '
+                # self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
+                return
+            else:
+                syll = word[n - 2] + word[n - 1] + word[n]
+                self.tsyll_freq[syll] = self.tsyll_freq.setdefault(syll, 0) + 1
 
 
 class DateAnalyzer:

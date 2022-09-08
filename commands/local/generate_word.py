@@ -13,6 +13,8 @@ def generate(input_, **kwargs):
         generate_func = local_generator.generate_word_2
     elif kwargs.setdefault('key_3', False):
         generate_func = local_generator.generate_word_3
+    elif kwargs.setdefault('key_4', False):
+        generate_func = local_generator.generate_word_4
     else:
         generate_func = local_generator.generate_word_3
 
@@ -26,4 +28,5 @@ generate_word_command = local_command_system.Command()
 generate_word_command.keys = ['generate_word', 'gw']
 generate_word_command.description = 'generate new word(s)'
 generate_word_command.process = generate
-generate_word_command.kwargs = {'-1': 'use first algorithm', '-2': 'use second algorithm', '-3': 'use third algorithm'}
+generate_word_command.kwargs = {'-1': 'use first algorithm', '-2': 'use second algorithm', '-3': 'use third algorithm',
+                                '-4': 'use fourth alg'}

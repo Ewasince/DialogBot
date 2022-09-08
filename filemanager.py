@@ -123,7 +123,8 @@ def save_dicts(analyzer: Analyzer, path=data_dir, fjson=False) -> list:
 
 def save_data(analyzer: Analyzer, path=data_dir, fjson=False) -> list:
     dicts = save_dicts(analyzer, path=path, fjson=fjson)
-    save_class_properties(analyzer.date_analyzer, path=path)
+    if analyzer.date_analyzer is not None:
+        save_class_properties(analyzer.date_analyzer, path=path)
     return dicts
 
 
