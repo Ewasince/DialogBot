@@ -79,13 +79,13 @@ def proceed_message_chat(event, prop_path) -> str:
     chat_id = event.chat_id
     message = event.message['text']
 
-    try:
-        result = process_command(message.strip(), command_list, chat_id=chat_id, event=event)
-        if result is not None:
-            return result
-    except Exception as e:
-        logger.exception('')
-        return str(e)
+    # try:
+    result = process_command(message.strip(), command_list, chat_id=chat_id, event=event)
+    if result is not None:
+        return result
+    # except Exception as e:
+    #     logger.exception('')
+    #     return str(e)
 
     action = event.message.setdefault('action', None)
     if action is not None:
@@ -99,7 +99,7 @@ def proceed_message_chat(event, prop_path) -> str:
         if member_id == -214483095:
             result = f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
             f'переписке. Доступные команды можно узнать набрав \'help\''
-            analyze_chat(message, chat_id=chat_id, event=event)
+            analyze_chat('', chat_id=chat_id, event=event)
         else:
             result = f'опа, @id{member_id} вылез'
         return result
@@ -107,14 +107,14 @@ def proceed_message_chat(event, prop_path) -> str:
         result = f'потеряли молодого'
         return result
 
-    analyze_new_message(message, event=event)
+    analyze_new_message('', event=event)
     # conversation_message_id = message_obj['conversation_message_id']
     properties = load_properties(prop_path)
     mes_remain = properties.setdefault('mes_remain', 0)
     average_mes_day = properties['average_mes']
     if mes_remain > 0:
         mes_remain -= 1
-        replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+        replica = new_replica('', chat_id=chat_id, event=event)
         if mes_remain == 0:
             mes_remain = -round(random.normalvariate(average_mes_day * 0.6, 3))
     elif mes_remain < 0:
@@ -124,7 +124,7 @@ def proceed_message_chat(event, prop_path) -> str:
         replica = ''
     else:
         mes_remain = round(random.normalvariate(average_mes_day * 0.8, 3))
-        replica = new_replica(message, chat_id=chat_id, event=event)  # TODO: сделать поочередное замолкание бота
+        replica = new_replica('', chat_id=chat_id, event=event)
     properties['mes_remain'] = mes_remain
     save_properties(properties, prop_path)
     return replica

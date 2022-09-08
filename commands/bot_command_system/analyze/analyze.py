@@ -25,7 +25,7 @@ def analyze_chat(input_, **kwargs):
         return None
     event = kwargs['event']
     if event is None:
-        return 'event is empty'
+        raise Exception('event is empty')
     chat_id = event.chat_id
     conv_message_id = event.message.conversation_message_id
 
@@ -46,7 +46,7 @@ def analyze_chat(input_, **kwargs):
     new_messages = list()
     properties = kwargs.setdefault('properties', None)
     if not properties:
-        properties = load_properties(path)
+        properties = load_properties(path) # TODO: скорее всего вторая проверка настроек бесполезна
     date_analyzer = DateAnalyzer(properties)
     analyzer = Analyzer(date_analyzer)
     for n in ids_to_load:
@@ -63,7 +63,7 @@ def analyze_chat(input_, **kwargs):
             date = message_obj['date']
             new_messages.append(Message(conversation_message_id, text, attachments, from_id, date))
     if len(new_messages) == 0:
-        return 'нечего анализировать'
+        raise Exception('нечего анализировать')
     messages_loaded.extend(new_messages)
 
     save_data(analyzer, path=path, fjson=False)
@@ -85,7 +85,7 @@ def analyze_new_message(_input, **kwargs):
     properties = load_properties(path)
     if len(properties) == 0 or message_obj['conversation_message_id'] - properties['last_id'] > 2:
         kwargs['properties'] = properties
-        analyze_chat(_input, **kwargs)
+        analyze_chat('', **kwargs)
         return
 
     date_analyzer = DateAnalyzer(properties)

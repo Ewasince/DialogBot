@@ -10,6 +10,8 @@ command_list = []
 
 
 def stats(input_, **kwargs):
+    if input_ != '':
+        return None
     event = kwargs['event']
     path = get_chat_path(event)
     gen = Generator(path)

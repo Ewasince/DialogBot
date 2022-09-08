@@ -17,7 +17,7 @@ def new_replica(input_, chat_id=None, **kwargs):
     if input_ != '':
         return None
     if not chat_id:
-        return 'no chat id'
+        raise Exception('no chat id')
     path = f'{data_chats_dir}\\{str(chat_id)}'
     filename = f'{path}\\messages'
     if not os.path.exists(filename):
