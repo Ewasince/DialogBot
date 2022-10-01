@@ -97,9 +97,8 @@ def proceed_message_chat(event, prop_path) -> str:
 
     if action_type == 'chat_invite_user':
         if member_id == -214483095:
-            result = f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей '
-            f'переписке. Доступные команды можно узнать набрав \'help\''
-            analyze_chat('', chat_id=chat_id, event=event)
+            result = f'Привет, я— {bot_name}. Для того чтобы начать предоставьте мне доступ ко всей переписке. ' \
+                     f'Доступные команды можно узнать набрав \'help\' '
         else:
             result = f'опа, @id{member_id} вылез'
         return result

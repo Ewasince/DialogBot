@@ -10,8 +10,8 @@ def create_settings_file():
     settings_file['test_filename'] = 'generator/test.txt'
     settings_file['group_id'] = ''
     settings_file['bot_name'] = ''
-    with open('settings.json', 'w') as f:
-        json.dump(settings_file, f)
+    with open('settings.json', 'w', encoding='utf8') as f:
+        json.dump(settings_file, f, ensure_ascii=False)
         print('file successfully created')
 
 
@@ -20,7 +20,7 @@ filename = 'settings.json'
 if not os.path.exists(filename):
     create_settings_file()
     print('settings file doesn\'t exists and has been created! please fill settings and restart program')
-with open(filename) as f:
+with open(filename, encoding='utf8') as f:
     settings = json.load(f)
 
 token = settings['token']
